@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulasi Graf: Konektivitas & Lintasan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary: #00aa13; /* Hijau Identitas */
+        --road-off: #e2e8f0;
+        --road-on: #10b981;
+        --bg-app: #ffffff;
+        --text-main: #1e293b;
+        --text-sec: #64748b;
+    }
+
+    body {
+        margin: 0; background: #f8fafc; 
+        font-family: 'Inter', sans-serif; /* Font Inter diterapkan global */
+        display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        user-select: none; padding-bottom: 60px;
+        color: var(--text-main);
+    }
+
+    #app {
+        width: 100%; max-width: 900px;
+        background: var(--bg-app); border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        overflow: hidden; border: 1px solid #e2e8f0;
+        margin-top: 30px;
+    }
+
+    /* HEADER */
+    header {
+        padding: 20px 30px; border-bottom: 1px solid #f1f5f9;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .header-text h2 { margin: 0; color: var(--text-main); font-size: 18px; font-weight: 700; }
+    .header-text p { margin: 6px 0 0; color: var(--text-sec); font-size: 14px; line-height: 1.5; }
+
+    /* STATUS BADGE */
+    .status-badge {
+        background: #fff1f2; color: #be123c; border: 1px solid #fda4af;
+        padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 13px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .status-badge.success { background: #f0fdf4; color: #15803d; border-color: #86efac; }
+
+    /* MAP AREA */
+    .map-container { position: relative; height: 500px; background: #fafafa; }
+    
+    svg { 
+        width: 100%; height: 100%; display: block; 
+        background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+        background-size: 24px 24px;
+    }
+
+    /* --- EDGE (SISI) --- */
+    .edge-path {
+        fill: none; 
+        stroke: var(--road-off); 
+        stroke-width: 8; 
+        stroke-linecap: round;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .edge-path.active { 
+        stroke: var(--road-on); 
+        filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));
+        opacity: 0.9;
+    }
+
+    /* --- NODE (SIMPUL) --- */
+    .node { cursor: pointer; } 
+    
+    .node circle { 
+        fill: white; stroke-width: 3px; 
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+        transition: stroke 0.3s;
+    }
+    
+    #n-Rumah circle { stroke: #3b82f6; } 
+    #n-Pasar circle { stroke: #f59e0b; } 
+    #n-Kampus circle { stroke: #ef4444; } 
+    .node.transit circle { stroke: #94a3b8; }
+
+    .node text.icon { font-size: 22px; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+    .node text.label { 
+        font-size: 12px; font-weight: 600; fill: #475569; 
+        text-anchor: middle; pointer-events: none; font-family: 'Inter', sans-serif;
+    }
+
+    .node.visited circle { fill: #dcfce7; stroke: #16a34a; }
+
+    /* MOTOR */
+    #motor {
+        font-size: 32px; text-anchor: middle; dominant-baseline: central;
+        pointer-events: none; 
+        transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
+    }
+
+    /* FOOTER */
+    footer { padding: 15px 30px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+    
+    #instruction { font-size: 14px; color: var(--text-sec); font-weight: 500; }
+    #instruction b { color: var(--text-main); }
+
+    button {
+        background: #ef4444; color: white; border: none;
+        padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;
+        font-family: 'Inter', sans-serif; font-size: 14px;
+        transition: background 0.2s;
+    }
+    button:hover { background: #dc2626; }
+
+    /* TOAST */
+    .toast {
+        position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+        background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px;
+        font-size: 14px; font-weight: 500; opacity: 0; transition: 0.3s; pointer-events: none;
+        display: flex; align-items: center; gap: 8px; z-index: 100;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+    .toast.show { opacity: 1; top: 40px; }
+
+    /* MATERI EDUKASI (REFINED) */
+    #edu-panel {
+        max-width: 900px; width: 100%; margin-top: 24px;
+        background: white; border-radius: 12px; border: 1px solid #e2e8f0;
+        padding: 32px; display: none;
+        border-left: 4px solid #3b82f6;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    #edu-panel.show { display: block; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes slideUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+
+    .edu-content h3 { margin-top: 0; font-size: 18px; color: #1e293b; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 20px;}
+    .edu-content p { line-height: 1.6; color: #475569; font-size: 15px; margin-bottom: 16px; }
+    
+    .feedback-box {
+        background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px;
+        margin-bottom: 24px;
+    }
+    .feedback-title { font-weight: 700; color: #334155; margin-bottom: 8px; display: block; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .feedback-text { color: #334155; font-size: 15px; line-height: 1.6; }
+
+    .concept-list { list-style: none; padding: 0; margin: 0; }
+    .concept-list li { 
+        margin-bottom: 12px; padding-left: 20px; position: relative; 
+        font-size: 15px; color: #475569; line-height: 1.6;
+    }
+    .concept-list li::before {
+        content: "•"; color: #3b82f6; font-weight: bold; font-size: 20px;
+        position: absolute; left: 0; top: -2px;
+    }
+    .concept-list strong { color: #1e293b; font-weight: 600; }
+
+</style>
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <div class="header-text">
+            <h2>Simulasi Navigasi Graf</h2>
+            <p>Tugas: Lakukan penjemputan di <b>Pasar</b>, lalu antar ke <b>Kampus</b>.</p>
+        </div>
+        <div class="status-badge" id="mission-status">
+            <span>🔴</span> Status: Menunggu Penjemputan
+        </div>
+    </header>
+
+    <div class="map-container">
+        <div id="toast-msg" class="toast">Notifikasi</div>
+
+        <svg viewBox="0 0 900 500">
+            <g id="edges-layer">
+                <path id="e-Rumah-Taman" class="edge-path" d="M150 250 L400 100" />
+                <path id="e-Rumah-Pasar" class="edge-path" d="M150 250 L400 400" />
+                <path id="e-Taman-Kampus" class="edge-path" d="M400 100 L750 250" />
+                <path id="e-Pasar-Kampus" class="edge-path" d="M400 400 L750 250" />
+                <path id="e-Taman-Pasar" class="edge-path" d="M400 100 L400 400" />
+            </g>
+
+            <g id="nodes-layer">
+                <g class="node" id="n-Rumah" onclick="movePlayer('Rumah', 150, 250)">
+                    <circle cx="150" cy="250" r="32" />
+                    <text x="150" y="250" class="icon">🏠</text>
+                    <text x="150" y="300" class="label">Rumah</text>
+                </g>
+
+                <g class="node transit" id="n-Taman" onclick="movePlayer('Taman', 400, 100)">
+                    <circle cx="400" cy="100" r="32" />
+                    <text x="400" y="100" class="icon">🌳</text>
+                    <text x="400" y="150" class="label">Taman</text>
+                </g>
+
+                <g class="node" id="n-Pasar" onclick="movePlayer('Pasar', 400, 400)">
+                    <circle cx="400" cy="400" r="32" />
+                    <text x="400" y="400" class="icon">🛒</text>
+                    <text x="400" y="450" class="label">Pasar</text>
+                </g>
+
+                <g class="node" id="n-Kampus" onclick="movePlayer('Kampus', 750, 250)">
+                    <circle cx="750" cy="250" r="32" />
+                    <text x="750" y="250" class="icon">🎓</text>
+                    <text x="750" y="300" class="label">Kampus</text>
+                </g>
+            </g>
+
+            <text id="motor" x="0" y="0" transform="translate(150, 250)">🛵</text>
+        </svg>
+    </div>
+
+    <footer>
+        <div id="instruction">
+            Posisi Awal: <b>Rumah</b>. Klik lokasi tujuan untuk berpindah.
+        </div>
+        <button onclick="resetGame()">Reset Simulasi</button>
+    </footer>
+</div>
+
+<div id="edu-panel" class="edu-content">
+    <h3>Hasil Analisis Simulasi</h3>
+    
+    <div class="feedback-box">
+        <span class="feedback-title">Evaluasi Lintasan:</span>
+        <div id="feedback-text" class="feedback-text"></div>
+    </div>
+
+    <p>
+        Berdasarkan simulasi yang telah dilakukan, berikut adalah implementasi konsep struktur data Graf dalam konteks navigasi:
+    </p>
+    <ul class="concept-list">
+        <li>
+            <strong>Simpul (Vertex):</strong> Merepresentasikan entitas lokasi seperti Rumah, Pasar, dan Kampus.
+        </li>
+        <li>
+            <strong>Sisi (Edge):</strong> Garis penghubung antar simpul yang merepresentasikan ketersediaan jalur. Perpindahan posisi hanya valid jika terdapat sisi yang menghubungkan dua simpul tersebut (sifat <em>Adjacency</em>).
+        </li>
+        <li>
+            <strong>Lintasan (Path):</strong> Urutan simpul yang dikunjungi dari titik awal hingga tujuan akhir.
+        </li>
+    </ul>
+    <p style="margin-top: 20px; font-size: 14px; border-top: 1px solid #f1f5f9; padding-top: 15px;">
+        <em>Catatan:</em> Pada Bab 1 ini, setiap sisi dianggap memiliki bobot yang sama. Konsep optimasi rute berdasarkan jarak (km) menggunakan <strong>Algoritma Dijkstra</strong> pada <em>Weighted Graph</em> akan dibahas secara mendalam pada Bab 5.
+    </p>
+</div>
+
+<script>
+    // --- KONFIGURASI ---
+    const PICKUP_NODE = 'Pasar';
+    const END_NODE = 'Kampus';
+    
+    // --- STATE ---
+    let currentNode = 'Rumah';
+    let hasPassenger = false;
+    let isFinished = false;
+    let pathHistory = ['Rumah']; // Menyimpan riwayat kunjungan
+
+    function movePlayer(targetNode, x, y) {
+        if(isFinished) return;
+        if(targetNode === currentNode) return;
+
+        // Validasi Konektivitas (Adjacency)
+        let edge1 = document.getElementById(`e-${currentNode}-${targetNode}`);
+        let edge2 = document.getElementById(`e-${targetNode}-${currentNode}`);
+        let activeEdge = edge1 || edge2;
+
+        if (activeEdge) {
+            // --- PERPINDAHAN VALID ---
+            
+            // 1. Update Visual
+            const motor = document.getElementById('motor');
+            motor.setAttribute('transform', `translate(${x}, ${y})`);
+            activeEdge.classList.add('active');
+            document.getElementById(`n-${targetNode}`).classList.add('visited');
+
+            // 2. Update Logika
+            currentNode = targetNode;
+            pathHistory.push(targetNode);
+            
+            // Cek Status Penjemputan
+            if (targetNode === PICKUP_NODE) {
+                hasPassenger = true;
+                showToast("Penumpang berhasil dijemput. Lanjutkan ke Kampus.", "success");
+                updateBadge(true);
+            }
+
+            // Cek Tujuan Akhir
+            if (targetNode === END_NODE) {
+                if (hasPassenger) {
+                    finishGame();
+                } else {
+                    showToast("Peringatan: Penumpang belum dijemput di Pasar.", "warning");
+                }
+            }
+
+            // Update Instruksi Footer
+            document.getElementById('instruction').innerHTML = `Posisi saat ini: <b>${targetNode}</b>.`;
+
+        } else {
+            // --- PERPINDAHAN INVALID ---
+            showToast(`Gagal: Tidak terdapat sisi (edge) yang menghubungkan ${currentNode} ke ${targetNode}.`);
+        }
+    }
+
+    function finishGame() {
+        isFinished = true;
+        showToast("Misi Selesai.", "success");
+        document.getElementById('instruction').innerHTML = "<b>Simulasi Selesai.</b> Silakan pelajari analisis di bawah.";
+        
+        // --- PERBAIKAN LOGIKA ANALISIS ---
+        
+        // Kita cek apakah user melewati 'Taman' dalam rutenya?
+        let passedTaman = pathHistory.includes('Taman');
+        let feedbackHTML = "";
+
+        if (passedTaman) {
+            // KONDISI: Lewat Taman (Tidak Efisien)
+            // Contoh: Rumah -> Taman -> Pasar -> Kampus (3 Langkah)
+            // Atau: Rumah -> Pasar -> Taman -> Kampus (3 Langkah)
+            feedbackHTML = `
+                <div class="feedback-box" style="border-left: 4px solid #d97706; background: #fffbeb;">
+                    <span class="feedback-title" style="color:#b45309">Evaluasi Lintasan: Kurang Efisien</span>
+                    <p style="margin:5px 0 0; color:#92400e;">
+                        Lintasan yang ditempuh: <b>${pathHistory.join(' &rarr; ')}</b>
+                    </p>
+                    <p style="margin-top:10px; color:#334155;">
+                        Secara topologi graf, lintasan ini <b>VALID</b> (terhubung).<br>
+                        Namun, rute ini <b>TIDAK EFISIEN</b> karena Anda singgah di simpul <b>Taman</b> yang menambah panjang lintasan menjadi <b>${pathHistory.length - 1} sisi</b>.
+                        Padahal, ada jalur yang lebih ringkas.
+                    </p>
+                </div>
+            `;
+        } else {
+            // KONDISI: Tidak lewat Taman (Efisien)
+            // Rute: Rumah -> Pasar -> Kampus (2 Langkah)
+            feedbackHTML = `
+                <div class="feedback-box" style="border-left: 4px solid #16a34a; background: #f0fdf4;">
+                    <span class="feedback-title" style="color:#15803d">Evaluasi Lintasan: Sangat Efisien</span>
+                    <p style="margin:5px 0 0; color:#166534;">
+                        Lintasan yang ditempuh: <b>${pathHistory.join(' &rarr; ')}</b>
+                    </p>
+                    <p style="margin-top:10px; color:#334155;">
+                        <b>Sempurna!</b> Anda memilih lintasan terpendek (hanya <b>2 sisi</b>) tanpa mengunjungi simpul tambahan yang tidak perlu.
+                        Ini menunjukkan pemahaman yang baik tentang efisiensi rute dalam graf.
+                    </p>
+                </div>
+            `;
+        }
+
+        document.getElementById('feedback-text').innerHTML = feedbackHTML;
+        
+        // Tampilkan Materi
+        const panel = document.getElementById('edu-panel');
+        panel.classList.add('show');
+        setTimeout(() => panel.scrollIntoView({behavior: "smooth"}), 500);
+    }
+
+    function updateBadge(pickedUp) {
+        const badge = document.getElementById('mission-status');
+        if (pickedUp) {
+            badge.innerHTML = "<span>🟢</span> Status: Membawa Penumpang";
+            badge.classList.add('success');
+        } else {
+            badge.innerHTML = "<span>🔴</span> Status: Menunggu Penjemputan";
+            badge.classList.remove('success');
+        }
+    }
+
+    function showToast(text, type = 'error') {
+        const toast = document.getElementById('toast-msg');
+        toast.innerHTML = text;
+        
+        if (type === 'success') toast.style.background = '#16a34a';
+        else if (type === 'warning') toast.style.background = '#d97706';
+        else toast.style.background = '#e11d48';
+
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function resetGame() {
+        currentNode = 'Rumah';
+        hasPassenger = false;
+        isFinished = false;
+        pathHistory = ['Rumah'];
+
+        // Reset Visual
+        document.querySelectorAll('.edge-path').forEach(e => e.classList.remove('active'));
+        document.querySelectorAll('.node').forEach(n => n.classList.remove('visited'));
+        document.getElementById('motor').setAttribute('transform', 'translate(150, 250)');
+        
+        // Reset UI
+        updateBadge(false);
+        document.getElementById('instruction').innerHTML = "Posisi Awal: <b>Rumah</b>. Klik lokasi tujuan untuk berpindah.";
+        document.getElementById('edu-panel').classList.remove('show');
+        document.getElementById('edu-panel').style.display = 'none'; 
+        setTimeout(() => document.getElementById('edu-panel').style.display = 'block', 100);
+    }
+</script>
+
+</body>
+</html>

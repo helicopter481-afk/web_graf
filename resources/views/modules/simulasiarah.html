@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Jaringan Warnet (Tak Berarah)</title>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #mynetwork { height: 500px; background-color: #f3f4f6; }
+    </style>
+</head>
+<body class="bg-gray-100 p-5 font-sans">
+
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-6">
+        <h2 class="text-xl font-bold text-blue-700 mb-2">Kasus 1: Topologi Jaringan (Tanpa Arah)</h2>
+        <p class="text-gray-600 mb-4 text-sm">
+            <span class="font-bold">Misi:</span> Cek jalur cadangan! Kabel LAN bersifat dua arah. 
+            Coba perhatikan, jika koneksi langsung ke <b>Router Utama</b> putus, apakah <b>PC Client</b> masih bisa dapat internet lewat temannya?
+        </p>
+
+        <div id="mynetwork" class="border-2 border-gray-300 rounded-lg"></div>
+        
+        <div class="mt-4 p-3 bg-blue-50 text-blue-800 rounded text-sm">
+            💡 <b>Poin Belajar:</b> Dalam graf tak berarah, sisi (garis) adalah jembatan dua arah. Derajat simpul adalah jumlah kabel yang nyolok ke PC tersebut.
+        </div>
+    </div>
+
+    <script>
+        // Data Node: Perangkat Jaringan
+        var nodes = new vis.DataSet([
+            { id: 1, label: 'Router Utama\n(Internet)', color: '#ef4444', shape: 'box', font: {color:'white'} },
+            { id: 2, label: 'Switch Hub', color: '#f97316' },
+            { id: 3, label: 'PC Operator', color: '#3b82f6' },
+            { id: 4, label: 'PC Client 1', color: '#93c5fd' },
+            { id: 5, label: 'PC Client 2', color: '#93c5fd' },
+            { id: 6, label: 'Printer Sharing', color: '#22c55e' }
+        ]);
+
+        // Data Edge: Kabel LAN (Bolak-balik)
+        var edges = new vis.DataSet([
+            { from: 1, to: 2, width: 3 }, // Router ke Switch
+            { from: 2, to: 3 }, // Switch ke Operator
+            { from: 2, to: 4 }, // Switch ke Client 1
+            { from: 2, to: 5 }, // Switch ke Client 2
+            { from: 4, to: 5, label: 'Peer-to-Peer' }, // Kabel langsung antar Client (Jalur tikus!)
+            { from: 3, to: 6 }, // Operator ke Printer
+            { from: 5, to: 6 }  // Client 2 ke Printer
+        ]);
+
+        var container = document.getElementById('mynetwork');
+        var data = { nodes: nodes, edges: edges };
+        var options = {
+            nodes: { shape: 'dot', size: 25, font: { size: 14 } },
+            edges: { color: '#64748b', width: 2 }, // Abu-abu netral
+            physics: { stabilization: false } // Agar node bisa goyang-goyang seru
+        };
+        new vis.Network(container, data, options);
+    </script>
+</body>
+</html>
+
+# Representasi dua jenis graf
+undirected = {
+    'A': ['B', 'C'],
+    'B': ['A', 'C'],
+    'C': ['A', 'B']
+}
+
+directed = {
+    'A': ['B'],
+    'B': ['C'],
+    'C': []
+}
+
+print("Graf Tak Berarah:")
+for v, n in undirected.items():
+    print(v, "↔", n)
+
+print("\nGraf Berarah:")
+for v, n in directed.items():
+    print(v, "→", n)

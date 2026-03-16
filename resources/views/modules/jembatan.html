@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7 Jembatan Königsberg (Final Edu)</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --water-bg: #bae6fd;
+        --land-bg: #86efac;      
+        --land-stroke: #14532d;
+        --highlight: #fde047;
+        
+        --bridge-base: #7c2d12;
+        --bridge-rail: #431407;
+        --bridge-glow: #fbbf24;
+        --passed: #64748b;
+    }
+
+    body {
+        margin: 0; background: #f8fafc; font-family: 'Lato', sans-serif;
+        display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        padding-bottom: 50px; /* Ruang untuk scroll ke bawah */
+        user-select: none;
+    }
+
+    /* --- GAME CONTAINER --- */
+    #app-container {
+        width: 100%; max-width: 950px;
+        background: white; border-radius: 16px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #cbd5e1; overflow: hidden; position: relative;
+        margin-top: 20px; z-index: 10;
+    }
+
+    header {
+        background: #fff; padding: 15px 25px; border-bottom: 1px solid #e2e8f0;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    h2 { font-family: 'Cinzel', serif; color: #1e293b; margin: 0; font-size: 20px; }
+
+    .attempt-box {
+        background: #fff7ed; border: 1px solid #ffedd5; color: #c2410c;
+        padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 13px;
+    }
+
+    .map-wrapper {
+        position: relative; width: 100%; height: 500px;
+        background: var(--water-bg); 
+        background-image: radial-gradient(rgba(255,255,255,0.2) 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+    svg { width: 100%; height: 100%; display: block; }
+
+    /* LAND STYLES (Hijau Segar) */
+    .land-shape {
+        fill: var(--land-bg); stroke: var(--land-stroke); stroke-width: 4;
+        filter: drop-shadow(0 5px 3px rgba(0,0,0,0.2)); 
+        cursor: pointer; transition: fill 0.3s;
+    }
+    .land-shape.active-zone { fill: var(--highlight); stroke: #a16207; }
+
+    /* BRIDGE STYLES */
+    .bridge-group { cursor: default; transition: transform 0.2s; }
+    .bridge-body { fill: var(--bridge-base); stroke: var(--bridge-rail); stroke-width: 2; rx: 3; }
+    .bridge-group.disabled { opacity: 0.8; } 
+    .bridge-group.available { cursor: pointer; }
+    .bridge-group.available .bridge-body {
+        fill: #d97706; stroke: var(--bridge-glow); stroke-width: 4;
+        filter: drop-shadow(0 0 8px var(--bridge-glow));
+        animation: glowPulse 1.5s infinite alternate;
+    }
+    @keyframes glowPulse { from { filter: drop-shadow(0 0 5px var(--bridge-glow)); } to { filter: drop-shadow(0 0 15px var(--bridge-glow)); } }
+    .bridge-group.crossed .bridge-body { fill: var(--passed); stroke: #334155; filter: none; animation: none; }
+
+    .region-label { font-family: 'Cinzel', serif; font-size: 28px; font-weight: bold; fill: #064e3b; pointer-events: none; opacity: 0.8; text-shadow: 1px 1px 2px rgba(255,255,255,0.5); }
+    .player-token { transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); pointer-events: none; z-index: 50; filter: drop-shadow(0 6px 6px rgba(0,0,0,0.4)); }
+
+    footer { padding: 15px 25px; background: #fff; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+    button { padding: 10px 20px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; font-family: 'Lato', sans-serif; }
+    .btn-graph { background: #e2e8f0; color: #475569; }
+    .btn-graph.active { background: #3b82f6; color: white; }
+    .btn-reset { background: #fee2e2; color: #ef4444; margin-left: 10px; }
+    .btn-reset:hover { background: #fecaca; }
+    .status-text { font-size: 15px; font-weight: 600; color: #334155; }
+
+    .graph-layer { opacity: 0; pointer-events: none; transition: 0.3s; }
+    .graph-layer.visible { opacity: 1; }
+    .g-edge { fill:none; stroke: #f59e0b; stroke-width: 4; stroke-dasharray: 5; }
+    .g-node { fill: #dc2626; stroke: white; stroke-width: 2; r: 15; }
+    .g-text { fill: white; text-anchor: middle; dy: 5px; font-weight: bold; font-family: sans-serif; font-size: 14px;}
+
+    /* --- EDU SECTION (BAWAH) --- */
+    #edu-section {
+        max-width: 900px; width: 100%;
+        background: #fff7ed; border: 2px solid #fdba74; border-radius: 12px;
+        margin-top: 20px; padding: 0 30px;
+        
+        /* Animasi Slide Down */
+        max-height: 0; opacity: 0; overflow: hidden;
+        transition: max-height 0.8s ease-out, opacity 0.5s ease-in, padding 0.5s;
+    }
+
+    #edu-section.visible {
+        max-height: 1000px; opacity: 1; padding: 30px; /* Buka konten */
+    }
+
+    .edu-content h3 { font-family: 'Cinzel', serif; color: #9a3412; margin-top: 0; border-bottom: 2px solid #fed7aa; padding-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+    .edu-content p { color: #334155; line-height: 1.7; margin-bottom: 15px; }
+    
+    .fact-box {
+        background: white; border-left: 5px solid #ea580c;
+        padding: 15px 20px; border-radius: 0 8px 8px 0;
+        margin: 20px 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+</style>
+</head>
+<body>
+
+<div id="app-container">
+    <header>
+        <h2>7 Jembatan Königsberg</h2>
+        <div class="attempt-box">
+            <span>❤️ Kesempatan:</span>
+            <span id="attempt-count">3</span>/3
+        </div>
+    </header>
+
+    <div class="map-wrapper">
+        <svg viewBox="0 0 900 500" id="game-svg" preserveAspectRatio="xMidYMid slice">
+            
+            <g id="bridges-layer">
+                <g id="b1" class="bridge-group" onclick="crossBridge('b1', 'C', 'A', 280, 140)"> <rect x="265" y="60" width="30" height="170" class="bridge-body" transform="rotate(-15 280 140)"/> </g>
+                <g id="b2" class="bridge-group" onclick="crossBridge('b2', 'C', 'A', 460, 140)"> <rect x="445" y="60" width="30" height="170" class="bridge-body" transform="rotate(15 460 140)"/> </g>
+                <g id="b3" class="bridge-group" onclick="crossBridge('b3', 'B', 'A', 280, 360)"> <rect x="265" y="270" width="30" height="170" class="bridge-body" transform="rotate(15 280 360)"/> </g>
+                <g id="b4" class="bridge-group" onclick="crossBridge('b4', 'B', 'A', 460, 360)"> <rect x="445" y="270" width="30" height="170" class="bridge-body" transform="rotate(-15 460 360)"/> </g>
+                <g id="b5" class="bridge-group" onclick="crossBridge('b5', 'A', 'D', 630, 250)"> <rect x="540" y="235" width="180" height="30" class="bridge-body"/> </g>
+                <g id="b6" class="bridge-group" onclick="crossBridge('b6', 'C', 'D', 740, 150)"> <rect x="725" y="70" width="30" height="160" class="bridge-body" transform="rotate(-45 740 150)"/> </g>
+                <g id="b7" class="bridge-group" onclick="crossBridge('b7', 'B', 'D', 740, 350)"> <rect x="725" y="270" width="30" height="160" class="bridge-body" transform="rotate(45 740 350)"/> </g>
+            </g>
+
+            <g id="lands-layer">
+                <path id="land-C" class="land-shape" d="M -50,-50 L 950,-50 L 950,80 Q 850,120 700,130 T 400,120 T -50,150 Z" onclick="setStartNode('C')"/>
+                <path id="land-B" class="land-shape" d="M -50,550 L 950,550 L 950,420 Q 850,380 700,370 T 400,380 T -50,350 Z" onclick="setStartNode('B')"/>
+                <path id="land-D" class="land-shape" d="M 950,80 L 950,420 Q 800,380 750,300 Q 680,250 750,200 Q 800,120 950,80 Z" onclick="setStartNode('D')"/>
+                <ellipse id="land-A" class="land-shape" cx="370" cy="250" rx="200" ry="75" onclick="setStartNode('A')"/>
+            </g>
+
+            <g id="labels-layer">
+                <text x="370" y="260" text-anchor="middle" class="region-label">A</text>
+                <text x="450" y="60" text-anchor="middle" class="region-label">C</text>
+                <text x="450" y="460" text-anchor="middle" class="region-label">B</text>
+                <text x="860" y="260" text-anchor="middle" class="region-label">D</text>
+            </g>
+
+            <g id="graph-overlay" class="graph-layer">
+                <path class="g-edge" d="M 450,60 Q 300,100 370,250" /><path class="g-edge" d="M 450,60 Q 440,100 370,250" /><path class="g-edge" d="M 450,440 Q 300,400 370,250" /><path class="g-edge" d="M 450,440 Q 440,400 370,250" /><path class="g-edge" d="M 370,250 L 860,250" /><path class="g-edge" d="M 450,60 Q 700,100 860,250" /><path class="g-edge" d="M 450,440 Q 700,400 860,250" />
+                <circle class="g-node" cx="450" cy="60"/> <text class="g-text" x="450" y="60">C</text>
+                <circle class="g-node" cx="450" cy="440"/> <text class="g-text" x="450" y="440">B</text>
+                <circle class="g-node" cx="370" cy="250"/> <text class="g-text" x="370" y="250">A</text>
+                <circle class="g-node" cx="860" cy="250"/> <text class="g-text" x="860" y="250">D</text>
+            </g>
+
+            <g id="player" class="player-token" transform="translate(10,10)" style="opacity:0;">
+                <circle cx="0" cy="0" r="15" fill="#dc2626" stroke="white" stroke-width="3"/>
+                <circle cx="0" cy="0" r="6" fill="white"/>
+            </g>
+        </svg>
+    </div>
+
+    <footer>
+        <div class="status-text">
+            <span id="status-icon">📍</span>
+            <span id="status-text">Klik huruf A, B, C, atau D untuk mulai.</span>
+        </div>
+        <div>
+            <button class="btn-graph" onclick="toggleGraph(this)">👁️ Graf</button>
+            <button class="btn-reset" onclick="resetGame()">🗑️ Reset</button>
+        </div>
+    </footer>
+</div>
+
+<div id="edu-section">
+    <div class="edu-content">
+        <h3>💡 Kenapa Selalu Gagal?</h3>
+        <p>
+            Jangan khawatir! Kegagalanmu membuktikan teori matematika yang ditemukan oleh <b>Leonhard Euler</b> pada tahun 1736. 
+            Ia membuktikan bahwa masalah Jembatan Königsberg ini <b>MUSTAHIL</b> diselesaikan.
+        </p>
+        
+        <div class="fact-box">
+            <strong>Syarat Jalur Euler (Bisa Dilalui Sekali):</strong><br>
+            Sebuah graf hanya bisa dilalui jika jumlah simpul yang berderajat ganjil (jumlah jembatan ganjil) adalah <b>0</b> atau <b>2</b>.
+        </div>
+
+        <p><b>Analisis Peta Ini:</b></p>
+        <ul>
+            <li>Wilayah A (Pulau) punya <b>5</b> jembatan (Ganjil).</li>
+            <li>Wilayah B, C, dan D masing-masing punya <b>3</b> jembatan (Ganjil).</li>
+        </ul>
+        <p>
+            Karena ke-4 wilayah memiliki derajat ganjil, maka mustahil membuat rute tanpa mengangkat pena atau melewati jembatan dua kali.
+            Inilah sejarah lahirnya <b>Teori Graf</b>!
+        </p>
+        <p style="font-size:13px; color:#64748b; margin-top:10px;">
+            <i>*Sekarang kamu bisa menekan tombol <b>Reset</b> untuk mencoba membuktikannya lagi.</i>
+        </p>
+    </div>
+</div>
+
+<script>
+    const nodes = {
+        'C': { x: 450, y: 60, name: 'Wilayah C (Utara)' }, 
+        'B': { x: 450, y: 440, name: 'Wilayah B (Selatan)' },
+        'A': { x: 370, y: 250, name: 'Pulau A' }, 
+        'D': { x: 860, y: 250, name: 'Wilayah D (Timur)' }
+    };
+    
+    let currentState = { node: null, crossed: [], started: false };
+    let attempts = 3; // MUNDUR dari 3 ke 0
+    let isExplanationShown = false;
+
+    function setStartNode(nodeId) {
+        if (attempts <= 0) return; // Kunci jika nyawa habis
+        if (currentState.started) return; 
+        
+        currentState.node = nodeId; currentState.started = true;
+        const p = nodes[nodeId];
+        document.getElementById('player').style.opacity = 1;
+        document.getElementById('player').setAttribute('transform', `translate(${p.x}, ${p.y})`);
+        highlightLand(nodeId);
+        updateStatus(`Posisi: <b>${nodeId}</b>. Klik jembatan yang menyala!`, "🚶");
+        updateAvailableBridges();
+    }
+
+    function crossBridge(bridgeId, node1, node2, bx, by) {
+        if (attempts <= 0) return; // Kunci jika nyawa habis
+        if (currentState.node !== node1 && currentState.node !== node2) return;
+        if (currentState.crossed.includes(bridgeId)) { updateStatus("Jembatan ini sudah dilewati!", "⛔"); return; }
+
+        const targetNode = (currentState.node === node1) ? node2 : node1;
+        const targetPos = nodes[targetNode];
+        const player = document.getElementById('player');
+        
+        player.setAttribute('transform', `translate(${bx}, ${by})`);
+
+        setTimeout(() => {
+            player.setAttribute('transform', `translate(${targetPos.x}, ${targetPos.y})`);
+            currentState.node = targetNode;
+            currentState.crossed.push(bridgeId);
+            const bridgeEl = document.getElementById(bridgeId);
+            bridgeEl.classList.remove('available'); bridgeEl.classList.add('crossed');
+            highlightLand(targetNode);
+            
+            const sisa = 7 - currentState.crossed.length;
+            if (sisa === 0) { updateStatus("Game Selesai. (Mustahil!)", "🏁"); } 
+            else { updateStatus(`Sampai di <b>${targetNode}</b>. Sisa: ${sisa}`, "bridge"); }
+            
+            updateAvailableBridges(); checkDeadlock();
+        }, 300);
+    }
+
+    function updateAvailableBridges() {
+        document.querySelectorAll('.bridge-group').forEach(el => {
+            if(!el.classList.contains('crossed')) { el.classList.remove('available'); el.classList.add('disabled'); }
+        });
+        const bridges = document.querySelectorAll('.bridge-group');
+        let moveCount = 0;
+        bridges.forEach(el => {
+            if (el.getAttribute('onclick').includes(`'${currentState.node}'`) && !el.classList.contains('crossed')) {
+                el.classList.remove('disabled'); el.classList.add('available'); moveCount++;
+            }
+        });
+        return moveCount;
+    }
+
+    function checkDeadlock() {
+        setTimeout(() => {
+            const moves = updateAvailableBridges();
+            // JIKA BUNTU (Moves = 0 dan belum selesai)
+            if (moves === 0 && currentState.crossed.length < 7) {
+                handleFailure();
+            }
+        }, 350);
+    }
+
+    function handleFailure() {
+        attempts--; // Kurangi Nyawa
+        document.getElementById('attempt-count').innerText = attempts;
+
+        if(attempts > 0) {
+            updateStatus(`BUNTU! Sisa kesempatan: ${attempts}. Silakan Reset.`, "🛑");
+        } else {
+            // NYAWA HABIS -> TAMPILKAN MATERI
+            updateStatus(`KESEMPATAN HABIS! Baca penjelasan di bawah.`, "💡");
+            revealExplanation();
+        }
+    }
+
+    function revealExplanation() {
+        if(isExplanationShown) return;
+        isExplanationShown = true;
+        
+        const section = document.getElementById('edu-section');
+        section.classList.add('visible');
+        
+        // Auto Scroll ke bawah
+        setTimeout(() => {
+            section.scrollIntoView({ behavior: 'smooth' });
+        }, 500);
+    }
+
+    function resetGame() {
+        // Logika Reset
+        // Jika materi sudah muncul, kita reset nyawa ke 3 lagi agar user bisa "Membuktikan" teori
+        // Tapi materi tetap terbuka di bawah sebagai referensi
+        if(attempts <= 0) {
+            attempts = 3; 
+            document.getElementById('attempt-count').innerText = attempts;
+        }
+
+        currentState = { node: null, crossed: [], started: false };
+        document.querySelectorAll('.bridge-group').forEach(el => {
+            el.classList.remove('crossed', 'available'); el.classList.add('disabled');
+        });
+        document.querySelectorAll('.land-shape').forEach(el => el.classList.remove('active-zone'));
+        const p = document.getElementById('player');
+        p.style.opacity = 0; p.setAttribute('transform', 'translate(10,10)');
+        
+        updateStatus("Klik huruf A, B, C, atau D untuk mulai.", "📍");
+    }
+
+    function highlightLand(id) {
+        document.querySelectorAll('.land-shape').forEach(el => el.classList.remove('active-zone'));
+        document.getElementById(`land-${id}`).classList.add('active-zone');
+    }
+
+    function updateStatus(msg, icon) {
+        document.getElementById('status-text').innerHTML = msg;
+        document.getElementById('status-icon').innerText = icon;
+    }
+
+    function toggleGraph(btn) {
+        document.getElementById('graph-overlay').classList.toggle('visible');
+        btn.classList.toggle('active');
+    }
+
+    resetGame();
+</script>
+
+</body>
+</html>

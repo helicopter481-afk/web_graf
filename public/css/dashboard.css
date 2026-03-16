@@ -1,0 +1,96 @@
+/* Scale tampilan agar 100% browser terlihat seperti 110% */
+html {
+    font-size: 110%;
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 100%;
+    }
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+}
+
+.module-card {
+    transition: all 0.2s ease;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: white;
+}
+
+.module-card:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.module-card.completed {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.module-card.locked {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+/* Dark mode styles */
+.dark body {
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+.dark .card {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.dark .module-card {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.dark .module-card:hover {
+    border-color: #3b82f6;
+}
+
+.dark .module-card.completed {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, #1e293b 100%);
+}
+
+.dark .text-slate-700 {
+    color: #e2e8f0;
+}
+
+.dark .text-slate-800 {
+    color: #f1f5f9;
+}
+
+.dark .text-slate-500 {
+    color: #94a3b8;
+}
+
+.dark .bg-slate-100 {
+    background: #334155;
+}
+
+.dark .border-slate-100 {
+    border-color: #334155;
+}
