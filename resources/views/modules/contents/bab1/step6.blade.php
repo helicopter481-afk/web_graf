@@ -1011,28 +1011,24 @@
             let btn = document.getElementById('nav-btn-' + i);
             if (!btn) continue;
 
-            btn.className =
-                "nav-btn h-10 rounded-lg font-bold text-sm transition flex items-center justify-center border shadow-sm";
-            btn.style.backgroundColor = "white";
-            btn.style.color = "#64748b";
-            btn.style.borderColor = "#e2e8f0";
+            // Hapus inline style lama agar bisa diatur murni oleh CSS
+            btn.removeAttribute("style");
+            
+            // Set base class
+            btn.className = "nav-btn h-10 rounded-lg font-bold text-sm transition flex items-center justify-center border shadow-sm";
 
             let terisi = q1_cekApakahTerisi(i);
             let aktif = (i === window.q1_soalAktif);
             let ragu = window.q1_dbRagu['soal_' + i];
 
             if (aktif) {
-                btn.style.backgroundColor = "#1e293b";
-                btn.style.color = "white";
-                btn.style.borderColor = "#0f172a";
+                btn.classList.add('nav-aktif');
             } else if (ragu) {
-                btn.style.backgroundColor = "#e2e8f0";
-                btn.style.color = "#475569";
-                btn.style.borderColor = "#cbd5e1";
+                btn.classList.add('nav-ragu');
             } else if (terisi) {
-                btn.style.backgroundColor = "#15803d";
-                btn.style.color = "white";
-                btn.style.borderColor = "#15803d";
+                btn.classList.add('nav-terjawab');
+            } else {
+                btn.classList.add('nav-kosong');
             }
         }
     }

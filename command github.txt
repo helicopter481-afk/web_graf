@@ -1,0 +1,12 @@
+#update kedepannya
+git add .
+git commit -m "update fitur"
+git push
+
+#jika awalan:
+git init
+git remote add origin https://github.com/helicopter481-afk/web_graf.git
+git add .
+git commit -m "Backup project skripsi Laravel"
+git branch -M main
+git push -u origin main

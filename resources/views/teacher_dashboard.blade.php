@@ -963,7 +963,7 @@
                         acts: bab3Activities
                     },
                     {
-                        name: 'Modul 4: Algoritma Dijkstra',
+                        name: 'Modul 4: Algoritma Jalur Terpendek ',
                         code: 'bab4',
                         quiz: 'quiz4',
                         acts: bab4Activities
@@ -994,7 +994,7 @@
                 acts: bab3Activities
             }];
             else if (babIndex === '3') configs = [{
-                name: 'Modul 4: Dijkstra',
+                name: 'Modul 4: Algoritma Jalur Terpendek',
                 code: 'bab4',
                 quiz: 'quiz4',
                 acts: bab4Activities

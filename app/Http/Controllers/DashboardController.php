@@ -176,7 +176,7 @@ class DashboardController extends Controller
             ],
             [
                 'id' => 4,
-                'title' => 'Pencarian Jalur Terpendek',
+                'title' => 'Algoritma Jalur Terpendek',
                 'desc' => 'Weighted graph dan algoritma Dijkstra',
                 'route' => 'bab4', // Akan memanggil route modul?bab=4
             ],
