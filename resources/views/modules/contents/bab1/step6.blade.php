@@ -303,7 +303,9 @@
             </div>
             <div class="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-lg border border-slate-100">
                 <i class="fa-regular fa-clock text-slate-400"></i>
-                <div id="timer-display" class="font-mono font-bold text-xl text-slate-800 leading-none">10:00</div>
+                <div id="timer-display" data-waktu="{{ $waktuMenit ?? 10 }}" class="font-mono font-bold text-xl text-slate-800 dark:text-white leading-none">
+                    {{ sprintf('%02d:00', $waktuMenit ?? 10) }}
+                </div>
             </div>
         </div>
 
@@ -565,62 +567,44 @@
 
                     {{-- Aturan Pengerjaan --}}
                     <div>
-                        <h4 class="font-bold text-slate-900 mb-3 text-base md:text-lg border-b border-slate-200 pb-2">
+                        <h4 class="font-bold text-slate-900 dark:text-white mb-3 text-base md:text-lg border-b border-slate-200 dark:border-slate-700 pb-2 transition-colors">
                             Aturan Pengerjaan Kuis:
                         </h4>
 
                         <ul class="space-y-3 text-xs md:text-sm text-justify">
 
                             <li class="flex items-start gap-3">
-                                <span
-                                    class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-700 font-bold shrink-0">1</span>
+                                <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 font-bold shrink-0 transition-colors">1</span>
                                 <span class="leading-relaxed">
-                                    <strong>Durasi Waktu:</strong> Anda memiliki waktu
-                                    <strong>10 menit</strong> untuk menyelesaikan <strong>10 misi</strong>.
-                                    Timer akan berjalan otomatis setelah tombol mulai ditekan.
-                                    Jika waktu habis, sistem akan otomatis mengumpulkan jawaban Anda.
+                                    <strong>Durasi Waktu:</strong> Anda memiliki waktu <strong>{{ $waktuMenit }} menit</strong> untuk menyelesaikan <strong>{{ count($quiz1) }} misi</strong>. Timer akan berjalan otomatis setelah tombol mulai ditekan. Jika waktu habis, sistem akan otomatis mengumpulkan jawaban Anda.
                                 </span>
                             </li>
 
                             <li class="flex items-start gap-3">
-                                <span
-                                    class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-700 font-bold shrink-0">2</span>
+                                <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 font-bold shrink-0 transition-colors">2</span>
                                 <span class="leading-relaxed">
-                                    <strong>Pahami Studi Kasus:</strong> Bacalah setiap misi dengan teliti sebelum
-                                    menjawab.
-                                    Setiap soal dirancang sebagai studi kasus yang menguji kemampuan Anda dalam
-                                    menganalisis permasalahan dan memodelkannya ke dalam konsep graf.
+                                    <strong>Pahami Studi Kasus:</strong> Bacalah setiap misi dengan teliti sebelum menjawab. Setiap soal dirancang sebagai studi kasus yang menguji kemampuan Anda dalam menganalisis permasalahan dan memodelkannya ke dalam konsep graf.
                                 </span>
                             </li>
 
                             <li class="flex items-start gap-3">
-                                <span
-                                    class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-700 font-bold shrink-0">3</span>
+                                <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 font-bold shrink-0 transition-colors">3</span>
                                 <span class="leading-relaxed">
-                                    <strong>Format Jawaban:</strong> Perhatikan jenis soal yang diberikan, seperti
-                                    <strong>Pilihan Ganda</strong>, <strong>Benar/Salah</strong>,
-                                    <strong>Input Teks</strong>, <strong>Input Angka</strong>, atau
-                                    <strong>Checkbox</strong>. Ikuti format jawaban yang diminta pada setiap soal.
+                                    <strong>Format Jawaban:</strong> Perhatikan jenis soal yang diberikan, seperti <strong>Pilihan Ganda</strong>, <strong>Benar/Salah</strong>, <strong>Input Teks</strong>, <strong>Input Angka</strong>, atau <strong>Checkbox</strong>. Ikuti format jawaban yang diminta pada setiap soal.
                                 </span>
                             </li>
 
                             <li class="flex items-start gap-3">
-                                <span
-                                    class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-700 font-bold shrink-0">4</span>
+                                <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 font-bold shrink-0 transition-colors">4</span>
                                 <span class="leading-relaxed">
-                                    <strong>Periksa Jawaban:</strong> Pastikan jawaban sudah sesuai dengan instruksi
-                                    (misalnya jumlah kata atau angka yang diminta) sebelum melanjutkan ke misi
-                                    berikutnya.
+                                    <strong>Periksa Jawaban:</strong> Pastikan jawaban sudah sesuai dengan instruksi (misalnya jumlah kata atau angka yang diminta) sebelum melanjutkan ke misi berikutnya.
                                 </span>
                             </li>
 
                             <li class="flex items-start gap-3">
-                                <span
-                                    class="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold shrink-0">5</span>
-                                <span class="leading-relaxed text-red-700">
-                                    <strong>Dilarang Keras:</strong> Jangan melakukan refresh halaman browser
-                                    (F5 atau tarik layar ke bawah) selama kuis berlangsung, karena dapat menyebabkan
-                                    waktu dan progres kuis Anda hilang atau terganggu.
+                                <span class="w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center text-red-600 dark:text-red-400 font-bold shrink-0 transition-colors">5</span>
+                                <span class="leading-relaxed text-red-700 dark:text-red-400 transition-colors">
+                                    <strong>Dilarang Keras:</strong> Jangan melakukan refresh halaman browser (F5 atau tarik layar ke bawah) selama kuis berlangsung, karena dapat menyebabkan waktu dan progres kuis Anda hilang atau terganggu.
                                 </span>
                             </li>
 
@@ -640,48 +624,46 @@
         </div>
 
         {{-- MODAL KONFIRMASI (FIXED SCREEN) --}}
-        <<div id="modal-konfirmasi"
-            class="fixed inset-0 bg-slate-900/50 z-[9999] flex items-center justify-center p-4 hidden">
-            <div class="bg-white rounded-xl p-6 max-w-sm w-full shadow-2xl transform scale-100 transition-transform">
-                <h3 class="text-lg font-bold text-slate-800 mb-2">Belum Selesai</h3>
-                <p class="text-sm text-slate-600 mb-6">Masih ada soal kosong. Yakin?</p>
+        <div id="modal-konfirmasi" class="fixed inset-0 bg-slate-900/50 z-[9999] flex items-center justify-center p-4 hidden">
+            <div class="bg-white dark:bg-slate-900 rounded-xl p-6 max-w-sm w-full shadow-2xl transform scale-100 transition-all border border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Belum Selesai</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">Masih ada soal kosong. Yakin?</p>
                 <div class="flex justify-end gap-3">
                     <button onclick="document.getElementById('modal-konfirmasi').classList.add('hidden')"
-                        class="px-4 py-2 rounded text-slate-600 hover:bg-slate-50 font-bold text-sm border border-slate-200">BATAL</button>
+                        class="px-4 py-2 rounded text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-sm border border-slate-200 dark:border-slate-600 transition-colors">BATAL</button>
                     <button onclick="q1_aksiFinalisasi()"
-                        class="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 font-bold text-sm shadow">YA,
-                        KUMPULKAN</button>
+                        class="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 font-bold text-sm shadow transition-colors">YA, KUMPULKAN</button>
                 </div>
             </div>
-    </div>
+        </div>
 
-    {{-- MODAL HASIL (FIXED SCREEN) --}}
-    <div id="modal-hasil" class="fixed inset-0 bg-white z-[9999] flex items-center justify-center p-4 hidden">
-        <div class="text-center w-full max-w-md mx-auto">
-            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 text-konfirmasi-label">
-                NILAI AKHIR
-            </div>
+        {{-- MODAL HASIL (FIXED SCREEN) --}}
+        <div id="modal-hasil" class="fixed inset-0 bg-white dark:bg-slate-900 z-[9999] flex items-center justify-center p-4 hidden transition-colors">
+            <div class="text-center w-full max-w-md mx-auto">
+                <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 text-konfirmasi-label">
+                    NILAI AKHIR
+                </div>
 
-            <div class="div-skor-wrapper text-8xl font-black text-slate-800 mb-6">
-                <span id="skor-akhir">0</span>
-            </div>
+                <div class="div-skor-wrapper text-8xl font-black text-slate-800 dark:text-white mb-6 transition-colors">
+                    <span id="skor-akhir">0</span>
+                </div>
 
-            <div class="flex gap-3 justify-center w-full">
-                <button onclick="q1_aksiUlangi()"
-                    class="btn-ulangi-quiz px-6 py-3 border border-slate-200 rounded-lg font-bold text-slate-600 hover:bg-slate-50 transition-colors w-full">
-                    ULANGI
-                </button>
-                <button onclick="q1_aksiReviewJawaban()"
-                    class="btn-lihat-quiz px-6 py-3 bg-slate-800 text-white rounded-lg font-bold hover:bg-slate-900 shadow-lg transition-colors w-full">
-                    LIHAT PEMBAHASAN
-                </button>
-                <a href="{{ route('dashboard') }}"
-                    class="btn-dashboard flex items-center justify-center px-5 py-1 border border-slate-200 rounded-lg font-bold text-slate-600 hover:bg-slate-50 transition-colors w-full">
-                    DASHBOARD
-                </a>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center w-full">
+                    <button onclick="q1_aksiUlangi()"
+                        class="btn-ulangi-quiz px-6 py-3 border border-slate-200 dark:border-slate-700 rounded-lg font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors w-full">
+                        ULANGI
+                    </button>
+                    <button onclick="q1_aksiReviewJawaban()"
+                        class="btn-lihat-quiz px-6 py-3 bg-slate-800 dark:bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-900 dark:hover:bg-slate-600 shadow-lg transition-colors w-full">
+                        LIHAT PEMBAHASAN
+                    </button>
+                    <a href="{{ route('dashboard') }}"
+                        class="btn-dashboard flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors w-full shadow-lg">
+                        DASHBOARD
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 </section>
 
@@ -1268,6 +1250,53 @@
             });
     }
 
+    // --- MULAI UJIAN ---
+    function q1_aksiMulaiUjian() {
+        window.q1_isExamMode = true;
+        document.getElementById('modal-mulai').classList.add('hidden');
+        document.body.classList.add('exam-mode');
+
+        let timerDisp = document.getElementById('timer-display');
+        
+        // --- BACA DURASI DARI DATABASE ---
+        let menitKuis = 10; // Nilai jaga-jaga
+        if (timerDisp && timerDisp.hasAttribute('data-waktu')) {
+            // Tarik angka dari HTML (yang didapat dari database)
+            menitKuis = parseInt(timerDisp.getAttribute('data-waktu')) || 10;
+        }
+
+        // Ubah menit menjadi total detik
+        window.q1_sisaDetik = menitKuis * 60;
+        // ---------------------------------
+
+        if (timerDisp) {
+            // Pasang tampilan waktu awal sebelum interval berjalan (misal: "20:00")
+            let initialM = Math.floor(window.q1_sisaDetik / 60).toString().padStart(2, '0');
+            let initialS = (window.q1_sisaDetik % 60).toString().padStart(2, '0');
+            timerDisp.innerText = initialM + ":" + initialS;
+            timerDisp.classList.remove('text-red-600', 'animate-pulse');
+        }
+
+        if (window.q1_timerUjian) clearInterval(window.q1_timerUjian);
+        
+        window.q1_timerUjian = setInterval(() => {
+            window.q1_sisaDetik--;
+            
+            let m = Math.floor(window.q1_sisaDetik / 60).toString().padStart(2, '0');
+            let s = (window.q1_sisaDetik % 60).toString().padStart(2, '0');
+            
+            if (timerDisp) {
+                timerDisp.innerText = m + ":" + s;
+                if (window.q1_sisaDetik <= 60) timerDisp.classList.add('text-red-600', 'animate-pulse');
+            }
+            
+            if (window.q1_sisaDetik <= 0) {
+                clearInterval(window.q1_timerUjian);
+                q1_aksiFinalisasi(); 
+            }
+        }, 1000);
+    }
+
     // --- ULANGI UJIAN (RESET) ---
     function q1_aksiUlangi() {
         const modal = document.getElementById('modal-hasil');
@@ -1380,9 +1409,17 @@
                         btn.style.display = "block";
                     });
 
+                // ===============================================
+                // PERBAIKAN FATAL: RESET TIMER SESUAI DATABASE
+                // ===============================================
                 let timerDisp = document.getElementById('timer-display');
                 if (timerDisp) {
-                    timerDisp.innerText = '10:00';
+                    let resetMenit = 10;
+                    if (timerDisp.hasAttribute('data-waktu')) {
+                        resetMenit = parseInt(timerDisp.getAttribute('data-waktu')) || 10;
+                    }
+                    let mReset = resetMenit.toString().padStart(2, '0');
+                    timerDisp.innerText = mReset + ':00'; // SEKARANG DINAMIS!
                     timerDisp.classList.remove('text-red-600', 'animate-pulse');
                 }
 
@@ -1400,28 +1437,5 @@
                 restoreModalUI();
             };
         }
-    }
-
-    function q1_aksiMulaiUjian() {
-        window.q1_isExamMode = true;
-        document.getElementById('modal-mulai').classList.add('hidden');
-        document.body.classList.add('exam-mode');
-
-        window.q1_sisaDetik = 600;
-
-        let timerDisp = document.getElementById('timer-display');
-        if (timerDisp) timerDisp.classList.remove('text-red-600', 'animate-pulse');
-
-        if (window.q1_timerUjian) clearInterval(window.q1_timerUjian);
-        window.q1_timerUjian = setInterval(() => {
-            window.q1_sisaDetik--;
-            let m = Math.floor(window.q1_sisaDetik / 60).toString().padStart(2, '0');
-            let s = (window.q1_sisaDetik % 60).toString().padStart(2, '0');
-            if (timerDisp) {
-                timerDisp.innerText = m + ":" + s;
-                if (window.q1_sisaDetik <= 60) timerDisp.classList.add('text-red-600', 'animate-pulse');
-            }
-            if (window.q1_sisaDetik <= 0) q1_aksiFinalisasi();
-        }, 1000);
     }
 </script>

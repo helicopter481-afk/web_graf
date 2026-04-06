@@ -30,7 +30,7 @@
                         <li>
                             <strong>Breadth-First Search (BFS) / Menyapu Melebar:</strong> Anda mendatangi seluruh
                             dermaga di sepanjang sungai utama terlebih dahulu secara merata, baru kemudian berbelok
-                            masuk mengecek anak-anak sungai.
+                            masuk mengecek anak-anak sungai secara bertahap hingga tuntas ke ujung.
                         </li>
                         <li>
                             <strong>Depth-First Search (DFS) / Menelusuri Mendalam:</strong> Anda menyusuri satu cabang
@@ -51,9 +51,8 @@
                 {{-- Panel Kontrol Simulasi & Gradient Bawah --}}
                 <div
                     class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-900 to-transparent z-20 pointer-events-none flex flex-col justify-end p-4">
-                    <!-- Teks kecil petunjuk -->
                     <p class="text-slate-500 text-[10px] text-center mb-40 opacity-150">
-                        Klik button dibawah untuk melihat perbedaan
+                        Klik button dibawah untuk melihat efek animasi
                     </p>
                     <div class="flex justify-center gap-3 mb-2 pointer-events-auto relative z-30">
                         <button id="btn-bfs" onclick="showBFS()"
@@ -65,9 +64,8 @@
                             Simulasi DFS
                         </button>
                     </div>
-                    <p id="traversal-desc" class="text-slate-200 text-[11px] text-center leading-relaxed font-medium">
-                        <span class="text-black-400 font-bold">BFS (Melebar):</span> Menyapu semua simpul di level
-                        terdekat secara merata.
+                    <p id="traversal-desc" class="text-slate-200 text-[11px] text-center leading-relaxed font-medium min-h-[35px]">
+                        Pilih jenis penelusuran untuk melihat bagaimana algoritma bekerja.
                     </p>
                 </div>
             </div>
@@ -111,288 +109,125 @@
 
     </div>
 
-    {{-- SCRIPT LOGIKA VISUALISASI TRAVERSAL --}}
+    {{-- SCRIPT LOGIKA VISUALISASI TRAVERSAL DENGAN ANIMASI DELAY --}}
     <script>
         let traversalNet = null;
         let tNodes = null;
         let tEdges = null;
+        let animationTimeouts = []; // Menyimpan array timeout agar bisa di-clear jika tombol di-spam
+
+        function clearAnimations() {
+            animationTimeouts.forEach(timeout => clearTimeout(timeout));
+            animationTimeouts = [];
+        }
+
+        function resetGraphColor() {
+            const colorGray = { background: '#cbd5e1', border: '#94a3b8' };
+            tNodes.update([
+                { id: 1, color: colorGray }, { id: 2, color: colorGray }, { id: 3, color: colorGray },
+                { id: 4, color: colorGray }, { id: 5, color: colorGray }, { id: 6, color: colorGray }, { id: 7, color: colorGray }
+            ]);
+            tEdges.update([
+                { id: 'e12', color: '#cbd5e1', width: 2 }, { id: 'e13', color: '#cbd5e1', width: 2 },
+                { id: 'e24', color: '#cbd5e1', width: 2 }, { id: 'e25', color: '#cbd5e1', width: 2 },
+                { id: 'e36', color: '#cbd5e1', width: 2 }, { id: 'e37', color: '#cbd5e1', width: 2 }
+            ]);
+        }
 
         function initTraversalGraph() {
             const container = document.getElementById('traversal-vis');
             if (!container || traversalNet) return;
 
-            // Membuat node dengan struktur pohon (Hierarchical)
-            tNodes = new vis.DataSet([{
-                    id: 1,
-                    label: '1',
-                    level: 0
-                },
-                {
-                    id: 2,
-                    label: '2',
-                    level: 1
-                },
-                {
-                    id: 3,
-                    label: '3',
-                    level: 1
-                },
-                {
-                    id: 4,
-                    label: '4',
-                    level: 2
-                },
-                {
-                    id: 5,
-                    label: '5',
-                    level: 2
-                },
-                {
-                    id: 6,
-                    label: '6',
-                    level: 2
-                },
-                {
-                    id: 7,
-                    label: '7',
-                    level: 2
-                }
+            tNodes = new vis.DataSet([
+                { id: 1, label: '1', level: 0 }, { id: 2, label: '2', level: 1 }, { id: 3, label: '3', level: 1 },
+                { id: 4, label: '4', level: 2 }, { id: 5, label: '5', level: 2 }, { id: 6, label: '6', level: 2 }, { id: 7, label: '7', level: 2 }
             ]);
 
-            tEdges = new vis.DataSet([{
-                    id: 'e12',
-                    from: 1,
-                    to: 2
-                },
-                {
-                    id: 'e13',
-                    from: 1,
-                    to: 3
-                },
-                {
-                    id: 'e24',
-                    from: 2,
-                    to: 4
-                },
-                {
-                    id: 'e25',
-                    from: 2,
-                    to: 5
-                },
-                {
-                    id: 'e36',
-                    from: 3,
-                    to: 6
-                },
-                {
-                    id: 'e37',
-                    from: 3,
-                    to: 7
-                }
+            tEdges = new vis.DataSet([
+                { id: 'e12', from: 1, to: 2 }, { id: 'e13', from: 1, to: 3 },
+                { id: 'e24', from: 2, to: 4 }, { id: 'e25', from: 2, to: 5 },
+                { id: 'e36', from: 3, to: 6 }, { id: 'e37', from: 3, to: 7 }
             ]);
 
             const options = {
                 physics: false,
-                interaction: {
-                    dragNodes: false,
-                    dragView: false,
-                    zoomView: false,
-                    hover: false,
-                    selectable: false
-                },
-                layout: {
-                    hierarchical: {
-                        enabled: true,
-                        direction: 'UD',
-                        sortMethod: 'directed',
-                        levelSeparation: 60,
-                        nodeSpacing: 60
-                    }
-                },
-                nodes: {
-                    shape: 'dot',
-                    size: 16,
-                    font: {
-                        color: 'white',
-                        size: 12,
-                        bold: true
-                    },
-                    borderWidth: 2
-                },
-                edges: {
-                    width: 2,
-                    smooth: {
-                        type: 'cubicBezier',
-                        forceDirection: 'vertical',
-                        roundness: 0.4
-                    }
-                }
+                interaction: { dragNodes: false, dragView: false, zoomView: false, hover: false, selectable: false },
+                layout: { hierarchical: { enabled: true, direction: 'UD', sortMethod: 'directed', levelSeparation: 60, nodeSpacing: 60 } },
+                nodes: { shape: 'dot', size: 16, font: { color: 'white', size: 12, bold: true }, borderWidth: 2 },
+                edges: { width: 2, smooth: { type: 'cubicBezier', forceDirection: 'vertical', roundness: 0.4 } }
             };
 
-            traversalNet = new vis.Network(container, {
-                nodes: tNodes,
-                edges: tEdges
-            }, options);
+            traversalNet = new vis.Network(container, { nodes: tNodes, edges: tEdges }, options);
             traversalNet.once('afterDrawing', function() {
-                traversalNet.fit({
-                    animation: false
-                });
+                traversalNet.fit({ animation: false });
+                resetGraphColor();
+                setTimeout(() => showBFS(), 300); // Mulai BFS otomatis saat awal load dengan delay
             });
-
-            // Tampilkan BFS secara default saat pertama diload
-            showBFS();
         }
 
-        // Fungsi Menampilkan Visual BFS
+        // Animasi BFS
         window.showBFS = function() {
             if (!tNodes) return;
-            const colorBFS = {
-                background: '#3b82f6',
-                border: '#1d4ed8'
-            }; // Biru
-            const colorGray = {
-                background: '#cbd5e1',
-                border: '#94a3b8'
-            }; // Abu-abu
+            clearAnimations();
+            resetGraphColor();
 
-            tNodes.update([{
-                    id: 1,
-                    color: colorBFS
-                }, {
-                    id: 2,
-                    color: colorBFS
-                }, {
-                    id: 3,
-                    color: colorBFS
-                },
-                {
-                    id: 4,
-                    color: colorGray
-                }, {
-                    id: 5,
-                    color: colorGray
-                }, {
-                    id: 6,
-                    color: colorGray
-                }, {
-                    id: 7,
-                    color: colorGray
-                }
-            ]);
-            tEdges.update([{
-                    id: 'e12',
-                    color: '#3b82f6',
-                    width: 3
-                }, {
-                    id: 'e13',
-                    color: '#3b82f6',
-                    width: 3
-                },
-                {
-                    id: 'e24',
-                    color: '#cbd5e1',
-                    width: 2
-                }, {
-                    id: 'e25',
-                    color: '#cbd5e1',
-                    width: 2
-                },
-                {
-                    id: 'e36',
-                    color: '#cbd5e1',
-                    width: 2
-                }, {
-                    id: 'e37',
-                    color: '#cbd5e1',
-                    width: 2
-                }
-            ]);
+            const colorBFS = { background: '#3b82f6', border: '#1d4ed8' }; // Biru
 
-            // Update styling tombol
-            document.getElementById('btn-bfs').className =
-                "px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded shadow-sm border border-blue-400";
-            document.getElementById('btn-dfs').className =
-                "px-4 py-1.5 bg-slate-700 text-slate-200 text-xs font-bold rounded shadow-sm border border-slate-500 hover:bg-orange-600 hover:text-white transition-colors";
-            document.getElementById('traversal-desc').innerHTML =
-                '<span class="text-blue-400 font-bold">BFS (Melebar):</span> Menyapu semua simpul di level terdekat secara merata.';
+            // Update UI Tombol
+            document.getElementById('btn-bfs').className = "px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded shadow-sm border border-blue-400";
+            document.getElementById('btn-dfs').className = "px-4 py-1.5 bg-slate-700 text-slate-200 text-xs font-bold rounded shadow-sm border border-slate-500 hover:bg-orange-600 hover:text-white transition-colors";
+            document.getElementById('traversal-desc').innerHTML = '<span class="text-blue-400 font-bold">BFS (Melebar):</span> Perhatikan! Algoritma akan menyapu merata secara horisontal (level demi level).';
+
+            // Langkah 1: Node Akar
+            animationTimeouts.push(setTimeout(() => {
+                tNodes.update([{ id: 1, color: colorBFS }]);
+            }, 300));
+
+            // Langkah 2: Level 1
+            animationTimeouts.push(setTimeout(() => {
+                tNodes.update([{ id: 2, color: colorBFS }, { id: 3, color: colorBFS }]);
+                tEdges.update([{ id: 'e12', color: '#3b82f6', width: 3 }, { id: 'e13', color: '#3b82f6', width: 3 }]);
+            }, 1200));
+
+            // Langkah 3: Level 2
+            animationTimeouts.push(setTimeout(() => {
+                tNodes.update([ { id: 4, color: colorBFS }, { id: 5, color: colorBFS }, { id: 6, color: colorBFS }, { id: 7, color: colorBFS } ]);
+                tEdges.update([{ id: 'e24', color: '#3b82f6', width: 3 }, { id: 'e25', color: '#3b82f6', width: 3 }, { id: 'e36', color: '#3b82f6', width: 3 }, { id: 'e37', color: '#3b82f6', width: 3 }]);
+            }, 2100));
         }
 
-        // Fungsi Menampilkan Visual DFS
+        // Animasi DFS
         window.showDFS = function() {
             if (!tNodes) return;
-            const colorDFS = {
-                background: '#f97316',
-                border: '#c2410c'
-            }; // Oranye
-            const colorGray = {
-                background: '#cbd5e1',
-                border: '#94a3b8'
-            }; // Abu-abu
+            clearAnimations();
+            resetGraphColor();
 
-            tNodes.update([{
-                    id: 1,
-                    color: colorDFS
-                }, {
-                    id: 2,
-                    color: colorDFS
-                }, {
-                    id: 3,
-                    color: colorGray
-                },
-                {
-                    id: 4,
-                    color: colorDFS
-                }, {
-                    id: 5,
-                    color: colorGray
-                }, {
-                    id: 6,
-                    color: colorGray
-                }, {
-                    id: 7,
-                    color: colorGray
-                }
-            ]);
-            tEdges.update([{
-                    id: 'e12',
-                    color: '#f97316',
-                    width: 3
-                }, {
-                    id: 'e13',
-                    color: '#cbd5e1',
-                    width: 2
-                },
-                {
-                    id: 'e24',
-                    color: '#f97316',
-                    width: 3
-                }, {
-                    id: 'e25',
-                    color: '#cbd5e1',
-                    width: 2
-                },
-                {
-                    id: 'e36',
-                    color: '#cbd5e1',
-                    width: 2
-                }, {
-                    id: 'e37',
-                    color: '#cbd5e1',
-                    width: 2
-                }
-            ]);
+            const colorDFS = { background: '#f97316', border: '#c2410c' }; // Oranye
 
-            // Update styling tombol
-            document.getElementById('btn-dfs').className =
-                "px-4 py-1.5 bg-orange-600 text-white text-xs font-bold rounded shadow-sm border border-orange-400";
-            document.getElementById('btn-bfs').className =
-                "px-4 py-1.5 bg-slate-700 text-slate-200 text-xs font-bold rounded shadow-sm border border-slate-500 hover:bg-blue-600 hover:text-white transition-colors";
-            document.getElementById('traversal-desc').innerHTML =
-                '<span class="text-orange-400 font-bold">DFS (Mendalam):</span> Menembus satu cabang hingga ujung (jalan buntu).';
+            // Update UI Tombol
+            document.getElementById('btn-dfs').className = "px-4 py-1.5 bg-orange-600 text-white text-xs font-bold rounded shadow-sm border border-orange-400";
+            document.getElementById('btn-bfs').className = "px-4 py-1.5 bg-slate-700 text-slate-200 text-xs font-bold rounded shadow-sm border border-slate-500 hover:bg-blue-600 hover:text-white transition-colors";
+            document.getElementById('traversal-desc').innerHTML = '<span class="text-orange-400 font-bold">DFS (Mendalam):</span> Perhatikan! Algoritma akan menembus tajam ke satu cabang hingga mentok ujung jalan buntu.';
+
+            // Langkah 1: Node Akar
+            animationTimeouts.push(setTimeout(() => {
+                tNodes.update([{ id: 1, color: colorDFS }]);
+            }, 300));
+
+            // Langkah 2: Turun ke Kiri
+            animationTimeouts.push(setTimeout(() => {
+                tNodes.update([{ id: 2, color: colorDFS }]);
+                tEdges.update([{ id: 'e12', color: '#f97316', width: 3 }]);
+            }, 1200));
+
+            // Langkah 3: Tembus langsung ke Dasar Kiri
+            animationTimeouts.push(setTimeout(() => {
+                tNodes.update([{ id: 4, color: colorDFS }]);
+                tEdges.update([{ id: 'e24', color: '#f97316', width: 3 }]);
+            }, 2100));
         }
 
         document.addEventListener("DOMContentLoaded", function() {
-            // Beri sedikit jeda agar kontainer siap sebelum merender graf
             setTimeout(initTraversalGraph, 500);
         });
     </script>

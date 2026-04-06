@@ -29,7 +29,22 @@ class ChapterController extends Controller
             ->get()
             ->shuffle(); 
             
-        $waktuMenit = 40; 
+        // ---------------------------------------------------
+        // MENCARI DURASI KUIS DARI DATABASE
+        // ---------------------------------------------------
+        $waktuMenit = 10; // Default dasar 10 menit
+
+        if ($activeBab == 1 && $quiz1->isNotEmpty()) {
+            $waktuMenit = $quiz1->first()->waktu_menit ?? 10;
+        } elseif ($activeBab == 2 && $quiz2->isNotEmpty()) {
+            $waktuMenit = $quiz2->first()->waktu_menit ?? 10;
+        } elseif ($activeBab == 3 && $quiz3->isNotEmpty()) {
+            $waktuMenit = $quiz3->first()->waktu_menit ?? 10;
+        } elseif ($activeBab == 4 && $quiz4->isNotEmpty()) {
+            $waktuMenit = $quiz4->first()->waktu_menit ?? 10;
+        } elseif ($activeBab == 99 && $evaluasi->isNotEmpty()) {
+            $waktuMenit = $evaluasi->first()->waktu_menit ?? 40; // Default 40 menit untuk evaluasi
+        }
 
         // 1. Ambil data progress harian (Aktivitas 1.1, Praktikum, dll)
         $progressData = StudentProgress::where('student_id', $studentId)->get()->keyBy('section_code');

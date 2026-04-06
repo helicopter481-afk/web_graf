@@ -1,5 +1,5 @@
 <section id="step-4" class="step-slide">
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-8 md:p-10 max-w-6xl mx-auto -mt-8">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-8 md:p-10 max-w-6xl mx-auto">
         
         {{-- JUDUL HALAMAN --}}
         <h2 class="text-2xl md:text-3xl font-bold mb-6 text-slate-900 border-b border-slate-200 pb-4 flex items-center gap-3">

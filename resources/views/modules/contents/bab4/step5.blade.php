@@ -159,9 +159,9 @@
         }
 
         .nav-ragu {
-            background: #e2e8f0 !important;
-            color: #475569 !important;
-            border-color: #cbd5e1 !important;
+            background: #f59e0b !important; /* Warna Amber/Oranye */
+            color: #fff !important;
+            border-color: #d97706 !important;
         }
 
         html.exam-active,
@@ -282,7 +282,9 @@
             </div>
             <div class="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-lg border border-slate-100">
                 <i class="fa-regular fa-clock text-slate-400"></i>
-                <div id="timer-display" class="font-mono font-bold text-xl text-slate-800 leading-none">10:00</div>
+                <div id="timer-display" data-waktu="{{ $waktuMenit ?? 10 }}" class="font-mono font-bold text-xl text-slate-800 dark:text-white leading-none">
+                    {{ sprintf('%02d:00', $waktuMenit ?? 10) }}
+                </div>
             </div>
         </div>
 
@@ -510,8 +512,10 @@
                         <h4 class="font-extrabold text-slate-900 mb-3 text-lg">Aturan Pengerjaan Kuis:</h4>
                         <ul class="space-y-3 text-sm text-justify text-slate-700">
                             <li class="flex items-start gap-3">
-                                <span class="w-6 h-6 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-700 font-bold shrink-0 text-xs">1</span>
-                                <span class="leading-relaxed pt-0.5"><strong>Durasi Waktu:</strong> Anda memiliki waktu <strong>10 Menit</strong>. Timer akan berjalan otomatis saat tombol mulai ditekan.</span>
+                                <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-700 dark:text-slate-300 font-bold shrink-0 transition-colors">1</span>
+                                <span class="leading-relaxed">
+                                    <strong>Durasi Waktu:</strong> Anda memiliki waktu <strong>{{ $waktuMenit }} menit</strong> untuk menyelesaikan <strong>{{ count($quiz4) }} misi</strong>. Timer akan berjalan otomatis setelah tombol mulai ditekan.
+                                </span>
                             </li>
                             <li class="flex items-start gap-3">
                                 <span class="w-6 h-6 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-700 font-bold shrink-0 text-xs">2</span>
@@ -541,35 +545,40 @@
         
         {{-- MODAL KONFIRMASI (FIXED SCREEN) --}}
         <div id="modal-konfirmasi" class="fixed inset-0 bg-slate-900/50 z-[9999] flex items-center justify-center p-4 hidden">
-            <div class="bg-white rounded-xl p-6 max-w-sm w-full shadow-2xl transform scale-100 transition-transform">
-                <h3 class="text-lg font-bold text-slate-800 mb-2">Belum Selesai</h3>
-                <p class="text-sm text-slate-600 mb-6">Masih ada soal kosong. Yakin?</p>
+            <div class="bg-white dark:bg-slate-900 rounded-xl p-6 max-w-sm w-full shadow-2xl transform scale-100 transition-all border border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Belum Selesai</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">Masih ada soal kosong. Yakin?</p>
                 <div class="flex justify-end gap-3">
-                    <button onclick="document.getElementById('modal-konfirmasi').classList.add('hidden')" class="px-4 py-2 rounded text-slate-600 hover:bg-slate-50 font-bold text-sm border border-slate-200">BATAL</button>
-                    <button onclick="q4_aksiFinalisasi()" class="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 font-bold text-sm shadow">YA, KUMPULKAN</button>
+                    <button onclick="document.getElementById('modal-konfirmasi').classList.add('hidden')"
+                        class="px-4 py-2 rounded text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-sm border border-slate-200 dark:border-slate-600 transition-colors">BATAL</button>
+                    <button onclick="q1_aksiFinalisasi()"
+                        class="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 font-bold text-sm shadow transition-colors">YA, KUMPULKAN</button>
                 </div>
             </div>
         </div>
 
         {{-- MODAL HASIL (FIXED SCREEN) --}}
-        <div id="modal-hasil" class="fixed inset-0 bg-white z-[9999] flex items-center justify-center p-4 hidden">
+        <div id="modal-hasil" class="fixed inset-0 bg-white dark:bg-slate-900 z-[9999] flex items-center justify-center p-4 hidden transition-colors">
             <div class="text-center w-full max-w-md mx-auto">
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 text-konfirmasi-label">
+                <div class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 text-konfirmasi-label">
                     NILAI AKHIR
                 </div>
 
-                <div class="div-skor-wrapper text-8xl font-black text-slate-800 mb-6">
+                <div class="div-skor-wrapper text-8xl font-black text-slate-800 dark:text-white mb-6 transition-colors">
                     <span id="skor-akhir">0</span>
                 </div>
 
-                <div class="flex gap-3 justify-center w-full">
-                    <button onclick="q4_aksiUlangi()" class="btn-ulangi-quiz px-6 py-3 border border-slate-200 rounded-lg font-bold text-slate-600 hover:bg-slate-50 transition-colors w-full">
+                <div class="flex flex-col sm:flex-row gap-3 justify-center w-full">
+                    <button onclick="q4_aksiUlangi()"
+                        class="btn-ulangi-quiz px-6 py-3 border border-slate-200 dark:border-slate-700 rounded-lg font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors w-full">
                         ULANGI
                     </button>
-                    <button onclick="q4_aksiReviewJawaban()" class="btn-lihat-quiz px-6 py-3 bg-slate-800 text-white rounded-lg font-bold hover:bg-slate-900 shadow-lg transition-colors w-full">
+                    <button onclick="q4_aksiReviewJawaban()"
+                        class="btn-lihat-quiz px-6 py-3 bg-slate-800 dark:bg-slate-700 text-white rounded-lg font-bold hover:bg-slate-900 dark:hover:bg-slate-600 shadow-lg transition-colors w-full">
                         LIHAT PEMBAHASAN
                     </button>
-                    <a href="{{ route('dashboard') }}" class="btn-dashboard px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 shadow-lg transition-colors w-full text-center hidden">
+                    <a href="{{ route('dashboard') }}"
+                        class="btn-dashboard flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors w-full shadow-lg">
                         DASHBOARD
                     </a>
                 </div>
@@ -917,18 +926,14 @@
             let aktif = (i === window.q4_soalAktif);
             let ragu = window.q4_dbRagu['soal_' + i];
 
-            if (aktif) {
-                btn.style.backgroundColor = "#1e293b";
-                btn.style.color = "white";
-                btn.style.borderColor = "#0f172a";
+             if (aktif) {
+                btn.classList.add('nav-aktif');
             } else if (ragu) {
-                btn.style.backgroundColor = "#e2e8f0"; 
-                btn.style.color = "#475569"; 
-                btn.style.borderColor = "#cbd5e1";
+                btn.classList.add('nav-ragu');
             } else if (terisi) {
-                btn.style.backgroundColor = "#15803d";
-                btn.style.color = "white";
-                btn.style.borderColor = "#15803d";
+                btn.classList.add('nav-terjawab');
+            } else {
+                btn.classList.add('nav-kosong');
             }
         }
     }
@@ -1273,9 +1278,17 @@
                     btn.style.display = "block";
                 });
 
+                // ===============================================
+                // PERBAIKAN FATAL: RESET TIMER SESUAI DATABASE
+                // ===============================================
                 let timerDisp = document.getElementById('timer-display');
                 if (timerDisp) {
-                    timerDisp.innerText = '10:00';
+                    let resetMenit = 10;
+                    if (timerDisp.hasAttribute('data-waktu')) {
+                        resetMenit = parseInt(timerDisp.getAttribute('data-waktu')) || 10;
+                    }
+                    let mReset = resetMenit.toString().padStart(2, '0');
+                    timerDisp.innerText = mReset + ':00'; // SEKARANG DINAMIS!
                     timerDisp.classList.remove('text-red-600', 'animate-pulse');
                 }
 
@@ -1300,21 +1313,44 @@
         document.getElementById('modal-mulai').classList.add('hidden');
         document.body.classList.add('exam-mode');
         
-        window.q4_sisaDetik = 600;
-        
         let timerDisp = document.getElementById('timer-display');
-        if (timerDisp) timerDisp.classList.remove('text-red-600', 'animate-pulse');
+        
+        // --- BACA DURASI DARI DATABASE ---
+        let menitKuis = 10; // Nilai jaga-jaga
+        if (timerDisp && timerDisp.hasAttribute('data-waktu')) {
+            // Tarik angka dari HTML (yang didapat dari database)
+            menitKuis = parseInt(timerDisp.getAttribute('data-waktu')) || 10;
+        }
+
+        // Ubah menit menjadi total detik
+        window.q4_sisaDetik = menitKuis * 60;
+        // ---------------------------------
+        
+        if (timerDisp) {
+            // Pasang tampilan waktu awal sebelum interval berjalan (misal: "20:00")
+            let initialM = Math.floor(window.q4_sisaDetik / 60).toString().padStart(2, '0');
+            let initialS = (window.q4_sisaDetik % 60).toString().padStart(2, '0');
+            timerDisp.innerText = initialM + ":" + initialS;
+            timerDisp.classList.remove('text-red-600', 'animate-pulse');
+        }
 
         if (window.q4_timerUjian) clearInterval(window.q4_timerUjian);
+        
         window.q4_timerUjian = setInterval(() => {
             window.q4_sisaDetik--;
+            
             let m = Math.floor(window.q4_sisaDetik / 60).toString().padStart(2, '0');
             let s = (window.q4_sisaDetik % 60).toString().padStart(2, '0');
+            
             if (timerDisp) {
                 timerDisp.innerText = m + ":" + s;
                 if (window.q4_sisaDetik <= 60) timerDisp.classList.add('text-red-600', 'animate-pulse');
             }
-            if (window.q4_sisaDetik <= 0) q4_aksiFinalisasi();
+            
+            if (window.q4_sisaDetik <= 0) {
+                clearInterval(window.q4_timerUjian);
+                q4_aksiFinalisasi(); 
+            }
         }, 1000);
     }
 </script>

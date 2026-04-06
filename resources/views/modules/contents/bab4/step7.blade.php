@@ -1,5 +1,5 @@
 <section id="step-7" class="step-slide">
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-10 -mt-8">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-8 md:p-10 max-w-6xl mx-auto">
         <h2 class="text-3xl font-bold mb-6 text-slate-900 border-b pb-4">Refleksi Pembelajaran</h2>
 
         <p class="text-slate-600 mb-8 leading-relaxed">
@@ -7,45 +7,65 @@
             dapatkan. Jawaban jujur Anda akan sangat membantu dalam proses belajar selanjutnya.
         </p>
 
-        <form id="reflectionForm" class="space-y-6">
-            {{-- Pertanyaan 1 --}}
-            <div>
-                <label class="block font-semibold text-slate-800 mb-2">
-                    1. Apa pemahaman utama yang kamu peroleh dari materi ini?
-                </label>
-                <textarea name="q1"
-                    class="w-full border border-slate-300 rounded-lg p-3 text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400"
-                    rows="3" placeholder="Jawab di sini..."></textarea>
+        <form id="reflectionForm" class="space-y-8">
+            {{-- Pertanyaan 1: Evaluasi Pemahaman (Universal) --}}
+            <div class="flex gap-4">
+                <div class="shrink-0 mt-0.5">
+                    <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-sm shadow-sm">1</div>
+                </div>
+                <div class="flex-1 space-y-3">
+                    <label class="block font-semibold text-slate-800 leading-relaxed text-justify">
+                        Setelah menyelesaikan materi ini, tuliskan 1-2 intisari terpenting yang berhasil Anda pahami!
+                    </label>
+                    <textarea name="q1"
+                        class="w-full border border-slate-300 rounded-lg p-4 text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400 shadow-sm"
+                        rows="3" placeholder="Intisari materi ini adalah..."></textarea>
+                </div>
             </div>
 
-            {{-- Pertanyaan 2 --}}
-            <div>
-                <label class="block font-semibold text-slate-800 mb-2">
-                    2. Bagian mana yang masih belum kamu pahami sepenuhnya?
-                </label>
-                <textarea name="q2"
-                    class="w-full border border-slate-300 rounded-lg p-3 text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400"
-                    rows="3" placeholder="Jawab di sini..."></textarea>
+            {{-- Pertanyaan 2: Cross-Disciplinary / Kaitan dengan Matkul Lain --}}
+            <div class="flex gap-4">
+                <div class="shrink-0 mt-0.5">
+                    <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-sm shadow-sm">2</div>
+                </div>
+                <div class="flex-1 space-y-3">
+                    <label class="block font-semibold text-slate-800 leading-relaxed text-justify">
+                        Menurut Anda, adakah irisan atau kemiripan konsep dari materi ini dengan apa yang Anda pelajari di mata kuliah lain (misalnya: Algoritma Pemrograman, Matematika Diskrit, Jaringan Komputer, dll)? Jelaskan singkat kaitan tersebut!
+                    </label>
+                    <textarea name="q2"
+                        class="w-full border border-slate-300 rounded-lg p-4 text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400 shadow-sm"
+                        rows="3" placeholder="Materi ini mengingatkan saya pada konsep di mata kuliah... karena..."></textarea>
+                </div>
             </div>
 
-            {{-- Pertanyaan 3 --}}
-            <div>
-                <label class="block font-semibold text-slate-800 mb-2">
-                    3. Contoh penerapan graf apa yang paling kamu pahami atau menarik bagimu?
-                </label>
-                <textarea name="q3"
-                    class="w-full border border-slate-300 rounded-lg p-3 text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400"
-                    rows="3" placeholder="Jawab di sini..."></textarea>
+            {{-- Pertanyaan 3: Pemetaan ke Dunia Nyata (Problem Solving) --}}
+            <div class="flex gap-4">
+                <div class="shrink-0 mt-0.5">
+                    <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-sm shadow-sm">3</div>
+                </div>
+                <div class="flex-1 space-y-3">
+                    <label class="block font-semibold text-slate-800 leading-relaxed text-justify">
+                        Berdasarkan simulasi dan kuis yang baru saja Anda selesaikan, coba bayangkan satu contoh aplikasi atau sistem di dunia nyata yang menurut Anda sangat bergantung pada logika materi ini!
+                    </label>
+                    <textarea name="q3"
+                        class="w-full border border-slate-300 rounded-lg p-4 text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400 shadow-sm"
+                        rows="3" placeholder="Contoh aplikasi di dunia nyata: ..."></textarea>
+                </div>
             </div>
 
-            {{-- Pertanyaan 4 --}}
-            <div>
-                <label class="block font-semibold text-slate-800 mb-2">
-                    4. Apa yang akan kamu lakukan agar pemahamanmu lebih baik pada materi berikutnya?
-                </label>
-                <textarea name="q4"
-                    class="w-full border border-slate-300 rounded-lg p-3 text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400"
-                    rows="3" placeholder="Jawab di sini..."></textarea>
+            {{-- Pertanyaan 4: Analisis Gap / Kesulitan Belajar --}}
+            <div class="flex gap-4">
+                <div class="shrink-0 mt-0.5">
+                    <div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold text-sm shadow-sm">4</div>
+                </div>
+                <div class="flex-1 space-y-3">
+                    <label class="block font-semibold text-slate-800 leading-relaxed text-justify">
+                        Kejujuran adalah kunci pembelajaran. Bagian mana dari materi ini yang masih membuat Anda ragu atau bingung? Apa strategi Anda untuk mengatasinya?
+                    </label>
+                    <textarea name="q4"
+                        class="w-full border border-slate-300 rounded-lg p-4 text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-400 shadow-sm"
+                        rows="3" placeholder="Bagian yang masih sulit adalah... Rencana saya untuk memahaminya adalah..."></textarea>
+                </div>
             </div>
         </form>
 

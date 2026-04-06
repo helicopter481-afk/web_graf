@@ -161,10 +161,11 @@
             border-color: #15803d !important;
         }
 
+        /* PERBAIKAN WARNA RAGU-RAGU */
         .nav-ragu {
-            background: #e2e8f0 !important;
-            color: #475569 !important;
-            border-color: #cbd5e1 !important;
+            background: #f59e0b !important; /* Warna Amber/Oranye */
+            color: #fff !important;
+            border-color: #d97706 !important;
         }
 
         html.exam-active,
@@ -202,6 +203,7 @@
         .zone-distractor { border-color: #f43f5e; } .zone-distractor .zone-header { background: #fff1f2; color: #be123c; border-color: #ffe4e6; }
         .drag-item { padding: 8px 12px; background: white; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: grab; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); user-select: none; touch-action: none; }
         .drag-item:active { cursor: grabbing; border-color: #3b82f6; }
+
         input:disabled, textarea:disabled { color: #334155 !important; opacity: 1 !important; -webkit-text-fill-color: #334155 !important; }
     </style>
 
@@ -215,7 +217,8 @@
             </div>
             <div class="flex items-center gap-3 bg-slate-800 px-4 py-2 rounded-lg border border-slate-600">
                 <i class="fa-regular fa-clock text-slate-300"></i>
-                <div id="timer-display" class="font-mono font-bold text-xl text-yellow-400 leading-none">
+                {{-- PERBAIKAN WAKTU DINAMIS DENGAN DATA-WAKTU --}}
+                <div id="timer-display" data-waktu="{{ $waktuMenit ?? 40 }}" class="font-mono font-bold text-xl text-yellow-400 leading-none">
                     {{ sprintf('%02d:00', $waktuMenit ?? 40) }}
                 </div>
             </div>
@@ -416,7 +419,7 @@
                     </div>
                     {{-- Legend --}}
                     <div class="mt-8 pt-6 border-t border-slate-100 space-y-3 text-xs text-slate-500 font-medium">
-                        <div class="flex items-center gap-3"><span class="w-3 h-3 bg-[#0f172a] rounded-sm"></span> Aktif</div>
+                        <div class="flex items-center gap-3"><span class="w-3 h-3 bg-slate-900 rounded-sm"></span> Aktif</div>
                         <div class="flex items-center gap-3"><span class="w-3 h-3 bg-green-700 rounded-sm"></span> Terjawab</div>
                         <div class="flex items-center gap-3"><span class="w-3 h-3 bg-gray-400 rounded-sm"></span> Ragu-ragu</div>
                         <div class="flex items-center gap-3"><span class="w-3 h-3 bg-white border border-slate-300 rounded-sm"></span> Kosong</div>
@@ -541,7 +544,6 @@
     window.ev_totalSoal = window.ev_dataSoal ? window.ev_dataSoal.length : 0;
     window.ev_isExamMode = false;
     window.ev_soalAktif = 1;
-    window.ev_sisaDetik = {{ ($waktuMenit ?? 40) * 60 }};
     window.ev_timerUjian = null;
     window.ev_dbRagu = {};
     window.ev_dbJawabanUser = {};
@@ -655,27 +657,24 @@
             let btn = document.getElementById('nav-btn-' + i);
             if (!btn) continue;
 
+            // Hapus style inline agar bisa dikendalikan murni oleh Class Tailwind / CSS
+            btn.removeAttribute("style");
+            
+            // Set base class
             btn.className = "nav-btn h-10 rounded-lg font-bold text-sm transition flex items-center justify-center border shadow-sm";
-            btn.style.backgroundColor = "white";
-            btn.style.color = "#64748b";
-            btn.style.borderColor = "#e2e8f0";
 
             let terisi = ev_cekApakahTerisi(i);
             let aktif = (i === window.ev_soalAktif);
             let ragu = window.ev_dbRagu['soal_' + i];
 
             if (aktif) {
-                btn.style.backgroundColor = "#0f172a";
-                btn.style.color = "white";
-                btn.style.borderColor = "#0f172a";
+                btn.classList.add('nav-aktif');
             } else if (ragu) {
-                btn.style.backgroundColor = "#e2e8f0"; 
-                btn.style.color = "#475569"; 
-                btn.style.borderColor = "#cbd5e1";
+                btn.classList.add('nav-ragu');
             } else if (terisi) {
-                btn.style.backgroundColor = "#15803d";
-                btn.style.color = "white";
-                btn.style.borderColor = "#15803d";
+                btn.classList.add('nav-terjawab');
+            } else {
+                btn.classList.add('nav-kosong');
             }
         }
     }
@@ -923,17 +922,37 @@
         document.body.classList.add('exam-mode');
         
         let timerDisp = document.getElementById('timer-display');
-        if (timerDisp) timerDisp.classList.remove('text-red-600', 'animate-pulse');
+        
+        // --- BACA DURASI DARI DATABASE ---
+        let menitKuis = 40; // Default Evaluasi
+        if (timerDisp && timerDisp.hasAttribute('data-waktu')) {
+            menitKuis = parseInt(timerDisp.getAttribute('data-waktu')) || 40;
+        }
+
+        // Ubah menit menjadi total detik
+        window.ev_sisaDetik = menitKuis * 60;
+        // ---------------------------------
+
+        if (timerDisp) {
+            let initialM = Math.floor(window.ev_sisaDetik / 60).toString().padStart(2, '0');
+            let initialS = (window.ev_sisaDetik % 60).toString().padStart(2, '0');
+            timerDisp.innerText = initialM + ":" + initialS;
+            timerDisp.classList.remove('text-red-600', 'animate-pulse');
+        }
 
         if (window.ev_timerUjian) clearInterval(window.ev_timerUjian);
+        
         window.ev_timerUjian = setInterval(() => {
             window.ev_sisaDetik--;
+            
             let m = Math.floor(window.ev_sisaDetik / 60).toString().padStart(2, '0');
             let s = (window.ev_sisaDetik % 60).toString().padStart(2, '0');
+            
             if (timerDisp) {
                 timerDisp.innerText = m + ":" + s;
-                if (window.ev_sisaDetik <= 300) timerDisp.classList.add('text-red-600', 'animate-pulse'); // 5 mnt
+                if (window.ev_sisaDetik <= 300) timerDisp.classList.add('text-red-600', 'animate-pulse'); // peringatan 5 mnt
             }
+            
             if (window.ev_sisaDetik <= 0) {
                 clearInterval(window.ev_timerUjian);
                 alert("Waktu Habis! Ujian otomatis dikumpulkan.");

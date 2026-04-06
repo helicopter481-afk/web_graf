@@ -96,6 +96,10 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/student/{id}', [TeacherDashboardController::class, 'update'])->name('student.update');
         Route::delete('/student/{id}', [TeacherDashboardController::class, 'destroy'])->name('student.destroy');
         Route::post('/kkm', [TeacherDashboardController::class, 'updateKKM'])->name('kkm.update');
+        
+        // ✅ ROUTE UNTUK UPDATE WAKTU KUIS MASSAL (Penting: Harus diletakkan di atas resource 'questions')
+        Route::post('/questions/update-time', [AdminQuestionController::class, 'updateTime'])->name('questions.update_time');
+        
         Route::resource('questions', AdminQuestionController::class);
         
         // ✅ INI YANG BENAR:
@@ -103,6 +107,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
 });
+
 Route::get('/cek-debug', function () {
     $user = Auth::user(); // User yang sedang login
 

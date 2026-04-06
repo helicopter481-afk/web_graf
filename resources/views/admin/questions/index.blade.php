@@ -45,7 +45,7 @@
         ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
-        /* Sidebar Nav (Disamakan dengan Dashboard) */
+        /* Sidebar Nav */
         .nav-link {
             display: flex; align-items: center; gap: 12px; padding: 10px 14px;
             color: #64748B; font-size: 0.875rem; font-weight: 500;
@@ -60,9 +60,7 @@
         tr { transition: background-color 0.2s; }
         tr:hover { background-color: #F8FAFC; }
 
-        /* ============================================
-           UNIFIED QUESTION TEXT FORMATTING
-        ============================================ */
+        /* Unified Formatting */
         .question-text, .preview-box { line-height: 1.8; color: #1e3a5f; }
         .question-text p, .preview-box p { margin-bottom: 0.75rem; }
         .question-text p:last-child, .preview-box p:last-child { margin-bottom: 0; }
@@ -75,15 +73,9 @@
         .question-text strong, .question-text b, .preview-box strong, .preview-box b { font-weight: 700; color: #0f172a; }
         .question-text em, .question-text i, .preview-box em, .preview-box i { font-style: italic; }
         .question-text u, .preview-box u { text-decoration: underline; }
-        .question-text>*:first-child, .preview-box>*:first-child { margin-top: 0 !important; }
-        .question-text>*:last-child, .preview-box>*:last-child { margin-bottom: 0 !important; }
-        .question-text p br:only-child, .preview-box p br:only-child { display: none; }
-        .question-text ol ol, .question-text ul ul, .preview-box ol ol, .preview-box ul ul { margin-top: 0.25rem; margin-bottom: 0.25rem; }
         
-        /* Auto Resize TextArea */
         textarea.auto-resize { min-height: 120px; resize: vertical; font-family: monospace; }
         
-        /* Quill Editor Customizations */
         .ql-toolbar.ql-snow { border-color: #E2E8F0; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; background: #F8FAFC; }
         .ql-container.ql-snow { border-color: #E2E8F0; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; min-height: 150px; }
     </style>
@@ -134,9 +126,14 @@
                     <p class="text-[11px] font-medium text-slate-500 uppercase tracking-wide">Database Bank Soal & Aktivitas</p>
                 </div>
             </div>
-            <button onclick="openModal('add')" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm flex items-center gap-2">
-                <i class="fa-solid fa-plus text-xs"></i> Buat Soal Baru
-            </button>
+            <div class="flex items-center gap-3">
+                <button onclick="openTimeModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-clock text-xs"></i> Atur Durasi Ujian
+                </button>
+                <button onclick="openModal('add')" class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-plus text-xs"></i> Buat Soal Baru
+                </button>
+            </div>
         </header>
 
         <div class="flex-1 overflow-y-auto p-8">
@@ -153,8 +150,9 @@
                     <table class="w-full text-left">
                         <thead>
                             <tr>
-                                <th class="px-6 py-4 w-24">Kode</th>
+                                <th class="px-6 py-4 w-24">Kode Kuis</th>
                                 <th class="px-6 py-4 w-20 text-center">Bobot</th>
+                                <th class="px-6 py-4 text-center">Durasi Terpasang</th> 
                                 <th class="px-6 py-4">Teks Pertanyaan / Instruksi</th>
                                 <th class="px-6 py-4 w-40 text-center">Tipe Soal</th>
                                 <th class="px-6 py-4 w-28 text-center">Aksi</th>
@@ -168,6 +166,10 @@
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <span class="text-slate-800 font-bold">{{ (int) ($q->weight ?? 10) }}</span><span class="text-[10px] text-slate-400 font-medium ml-1">pts</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        {{-- Tampilkan Info Durasi Massal --}}
+                                        <span class="text-indigo-700 font-bold bg-indigo-50 border border-indigo-100 px-2 py-1 rounded text-xs">{{ $q->waktu_menit ?? '-' }} Mnt</span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="text-slate-700 text-sm font-medium line-clamp-2" title="{{ strip_tags($q->question_text) }}">
@@ -193,7 +195,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-12 text-center">
+                                    <td colspan="6" class="px-6 py-12 text-center">
                                         <div class="flex flex-col items-center">
                                             <div class="w-12 h-12 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center text-xl mb-3"><i class="fa-solid fa-box-open"></i></div>
                                             <p class="text-sm font-medium text-slate-500">Bank soal masih kosong.</p>
@@ -208,7 +210,72 @@
         </div>
     </main>
 
-    {{-- MODAL FORM IMPROVED (Split View) --}}
+    {{-- MODAL PENGATURAN DURASI WAKTU --}}
+    <div id="timeModal" class="fixed inset-0 bg-slate-900/60 hidden items-center justify-center z-[60] backdrop-blur-sm flex py-8">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-6 overflow-hidden border border-slate-200 transform transition-all">
+            <div class="px-6 py-4 border-b border-slate-100 bg-indigo-50 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-stopwatch"></i></div>
+                <h3 class="font-bold text-indigo-900 text-lg">Pengaturan Durasi Kuis</h3>
+            </div>
+
+            <form action="{{ route('admin.questions.update_time') }}" method="POST" class="p-6">
+                @csrf
+                @php
+                    // Hitung durasi saat ini berdasarkan soal pertama yang ada di database
+                    $t1 = $questions->where('section_code', 'quiz1')->first()->waktu_menit ?? 10;
+                    $t2 = $questions->where('section_code', 'quiz2')->first()->waktu_menit ?? 10;
+                    $t3 = $questions->where('section_code', 'quiz3')->first()->waktu_menit ?? 10;
+                    $t4 = $questions->where('section_code', 'quiz4')->first()->waktu_menit ?? 10;
+                    $te = $questions->where('section_code', 'ujian_akhir')->first()->waktu_menit ?? 40;
+                @endphp
+
+                <p class="text-xs text-slate-500 mb-5 leading-relaxed bg-slate-50 p-3 rounded border border-slate-200">
+                    Durasi yang diatur di bawah ini akan diperbarui dan diterapkan ke <strong>seluruh soal</strong> di masing-masing modul secara otomatis.
+                </p>
+
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <label class="font-bold text-slate-700 text-sm">Kuis Modul 1</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" name="durasi[quiz1]" value="{{ $t1 }}" class="w-20 border border-slate-300 rounded p-1.5 text-center font-bold text-indigo-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none" required> <span class="text-xs text-slate-500 font-medium">Menit</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <label class="font-bold text-slate-700 text-sm">Kuis Modul 2</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" name="durasi[quiz2]" value="{{ $t2 }}" class="w-20 border border-slate-300 rounded p-1.5 text-center font-bold text-indigo-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none" required> <span class="text-xs text-slate-500 font-medium">Menit</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <label class="font-bold text-slate-700 text-sm">Kuis Modul 3</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" name="durasi[quiz3]" value="{{ $t3 }}" class="w-20 border border-slate-300 rounded p-1.5 text-center font-bold text-indigo-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none" required> <span class="text-xs text-slate-500 font-medium">Menit</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <label class="font-bold text-slate-700 text-sm">Kuis Modul 4</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" name="durasi[quiz4]" value="{{ $t4 }}" class="w-20 border border-slate-300 rounded p-1.5 text-center font-bold text-indigo-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none" required> <span class="text-xs text-slate-500 font-medium">Menit</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between bg-rose-50 p-2 -mx-2 rounded">
+                        <label class="font-bold text-rose-800 text-sm">Evaluasi Akhir</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" name="durasi[ujian_akhir]" value="{{ $te }}" class="w-20 border border-rose-300 rounded p-1.5 text-center font-bold text-rose-600 focus:border-rose-500 focus:ring-2 focus:ring-rose-200 outline-none" required> <span class="text-xs text-rose-600 font-medium">Menit</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-end gap-3">
+                    <button type="button" onclick="closeTimeModal()" class="px-5 py-2.5 bg-slate-100 rounded-lg text-slate-600 font-bold hover:bg-slate-200 transition-colors">Batal</button>
+                    <button type="submit" class="px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition-colors">Simpan Pengaturan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    {{-- MODAL FORM SOAL (Split View) --}}
     <div id="questionModal" class="fixed inset-0 bg-slate-900/60 hidden items-center justify-center z-50 backdrop-blur-sm flex py-8">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-7xl mx-6 flex h-full max-h-full overflow-hidden border border-slate-200 transform transition-all">
 
@@ -358,8 +425,16 @@
         </div>
     </div>
 
-    {{-- JAVASCRIPT TETAP SAMA KARENA LOGIKANYA SUDAH SANGAT SOLID --}}
     <script>
+        // FUNGSI BUKA TUTUP MODAL WAKTU
+        function openTimeModal() {
+            document.getElementById('timeModal').classList.remove('hidden');
+        }
+        function closeTimeModal() {
+            document.getElementById('timeModal').classList.add('hidden');
+        }
+
+        // LOGIKA KUIS LAINNYA
         function updateDefaultSectionCode() {
             const chapter = document.getElementById('in_chapter').value;
             const section = document.getElementById('in_section');
@@ -404,7 +479,6 @@
             if(weightBadge) weightBadge.innerText = weightVal + ' pts';
         }
 
-        // Event listener tambahan untuk update point real-time
         document.getElementById('in_weight').addEventListener('input', updatePreview);
 
         const TYPE_CONFIG = {
@@ -632,7 +706,6 @@
                 let booleanHtml = '<div class="space-y-3">';
                 rows.forEach((r) => {
                     const val = r.querySelector('.row-text')?.value || '';
-                    const key = r.querySelector('.row-text')?.getAttribute('data-key') || '';
                     booleanHtml += `
                     <div class="flex items-center gap-4 p-4 border border-slate-200 rounded-xl bg-white shadow-sm">
                         <div class="w-5 h-5 rounded-full border-2 border-slate-300"></div>

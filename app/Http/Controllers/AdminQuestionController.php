@@ -25,7 +25,9 @@ class AdminQuestionController extends Controller
             'type' => 'required',
             'question_text' => 'required',
             'correct_answer' => 'required',
-            'weight' => 'required|numeric|min:1|max:100'
+            'weight' => 'required|numeric|min:1|max:100',
+            // Validasi untuk waktu, tapi opsional (agar tidak error jika tidak ada form)
+            'waktu_menit' => 'nullable|numeric|min:1' 
         ]);
 
         // ========================================
@@ -46,7 +48,9 @@ class AdminQuestionController extends Controller
             'options' => $options,
             'correct_answer' => $correctAnswer, // ✅ Sekarang konsisten
             'explanation' => $request->explanation,
-            'weight' => floatval($request->weight)
+            'weight' => floatval($request->weight),
+            // Simpan waktu, default ke 10 jika kosong
+            'waktu_menit' => $request->input('waktu_menit', 10) 
         ]);
 
         return redirect()->back()->with('success', 'Soal berhasil ditambahkan!');
@@ -61,7 +65,8 @@ class AdminQuestionController extends Controller
             'weight' => 'required|numeric|min:1|max:100',
             'type' => 'required',
             'question_text' => 'required',
-            'correct_answer' => 'required'
+            'correct_answer' => 'required',
+            'waktu_menit' => 'nullable|numeric|min:1' 
         ]);
 
         // ========================================
@@ -70,7 +75,8 @@ class AdminQuestionController extends Controller
         $options = $this->decodeJsonSafe($request->options);
         $correctAnswer = $this->decodeJsonSafe($request->correct_answer);
 
-        $question->update([
+        // Siapkan data update
+        $updateData = [
             'section_code' => $request->section_code,
             'weight' => $request->weight,           // ✅ Paling Simpel
             'type' => $request->type,
@@ -79,7 +85,14 @@ class AdminQuestionController extends Controller
             'correct_answer' => $correctAnswer,
             'explanation' => $request->explanation,
             'chapter_code' => $request->chapter_code,
-        ]);
+        ];
+
+        // Jika form mengirim data waktu_menit, ikut update kolom tersebut
+        if ($request->has('waktu_menit')) {
+            $updateData['waktu_menit'] = $request->input('waktu_menit');
+        }
+
+        $question->update($updateData);
 
         return redirect()->back()->with('success', 'Soal berhasil diperbarui!');
     }
@@ -95,8 +108,7 @@ class AdminQuestionController extends Controller
     // ========================================
     /**
      * Decode JSON string dengan fallback aman
-     * 
-     * @param mixed $data - Bisa string JSON atau sudah array
+     * * @param mixed $data - Bisa string JSON atau sudah array
      * @return mixed - Array/Object hasil decode, atau data asli
      */
     private function decodeJsonSafe($data)
@@ -127,5 +139,18 @@ class AdminQuestionController extends Controller
         }
 
         return $data;
+    }
+
+    // FUNGSI UNTUK UPDATE WAKTU KUIS SECARA MASSAL
+    public function updateTime(Request $request)
+    {
+        // Looping data durasi yang dikirim dari form modal
+        foreach ($request->durasi as $section => $waktu) {
+            // Update semua soal yang punya section_code sama secara bersamaan
+            \App\Models\ContentQuestion::where('section_code', $section)
+                ->update(['waktu_menit' => $waktu]);
+        }
+
+        return back()->with('success', 'Pengaturan durasi kuis & evaluasi berhasil diperbarui!');
     }
 }

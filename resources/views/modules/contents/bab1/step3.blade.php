@@ -43,52 +43,94 @@
                 </div>
             </div>
 
-            {{-- INTERAKTIF A: GRAF ARAH --}}
+            {{-- INTERAKTIF A1: GRAF TAK BERARAH --}}
             <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 shadow-sm mb-6">
-                <h4 class="font-bold text-blue-900 mb-3">Visualisasi Interaktif: Graf Berarah vs Tak Berarah</h4>
-                <p class="text-sm text-blue-800 mb-4">
-                    <strong>Tugas Eksplorasi:</strong> Cobalah simulasikan pengiriman paket data (<em>packet routing</em>) dengan <strong>mengklik secara berurutan dua simpul</strong> (Simpul Awal lalu Simpul Tujuan). Perhatikan pesan <em>error</em> atau <em>success</em> yang muncul!
+                <h4 class="font-bold text-blue-900 mb-3">Visualisasi Interaktif 1: Graf Tak Berarah</h4>
+                <p class="text-sm text-blue-800 mb-4 text-justify">
+                    <strong>Tugas Eksplorasi:</strong> Bayangkan graf ini sebagai <strong>topologi kabel LAN</strong> sederhana antar komputer. Sebuah kabel biasa memungkinkan aliran data secara bolak-balik. Uji coba pengiriman data dengan <strong>mengklik dua simpul berurutan (Asal lalu Tujuan)</strong>. Perhatikan rute mana saja yang berhasil terkirim.
                 </p>
 
                 <div class="flex flex-col md:flex-row gap-6">
                     <div class="flex-1">
-                        <div id="vis-arah" class="w-full h-64 bg-white border border-slate-300 rounded-lg shadow-inner cursor-pointer"></div>
-                        <div id="route-logger" class="mt-3 p-3 bg-white border border-slate-300 rounded text-sm font-mono text-slate-600 text-center shadow-sm">
+                        <div id="vis-tak-berarah" class="w-full h-64 bg-white border border-slate-300 rounded-lg shadow-inner cursor-pointer"></div>
+                        <div id="route-logger-tak-berarah" class="mt-3 p-3 bg-white border border-slate-300 rounded text-sm font-mono text-slate-600 text-center shadow-sm">
                             Pilih Simpul Awal...
                         </div>
                     </div>
 
-                    {{-- TUGAS ANALISIS ARAH --}}
+                    {{-- TUGAS ANALISIS: TAK BERARAH --}}
                     <div class="flex-1 bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
-                        <p class="font-bold text-slate-800 text-sm mb-3">Tugas Analisis:</p>
+                        <p class="font-bold text-slate-800 text-sm mb-3">Tugas Analisis (Tak Berarah):</p>
                         <p class="text-xs text-slate-600 mb-4 leading-relaxed">Berdasarkan percobaan rute pada graf di samping, manakah skenario perpindahan data yang <strong>VALID</strong> dan bisa dieksekusi oleh sistem komputer? <em class="text-blue-600">(Pilih semua yang tepat)</em></p>
                         
                         <div class="space-y-2 mb-4">
                             <label class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded transition">
-                                <input type="checkbox" name="chk_arah" value="AB" class="w-4 h-4 text-blue-600"> <span class="text-xs font-semibold text-slate-700">Data dikirim dari Simpul A ke Simpul B</span>
+                                <input type="checkbox" name="chk_tak_berarah" value="AB" class="w-4 h-4 text-blue-600"> <span class="text-xs font-semibold text-slate-700">Data dikirim dari Simpul A ke Simpul B</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded transition">
-                                <input type="checkbox" name="chk_arah" value="BA" class="w-4 h-4 text-blue-600"> <span class="text-xs font-semibold text-slate-700">Data dikirim dari Simpul B ke Simpul A</span>
+                                <input type="checkbox" name="chk_tak_berarah" value="BA" class="w-4 h-4 text-blue-600"> <span class="text-xs font-semibold text-slate-700">Data dikirim kembali dari Simpul B ke Simpul A</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded transition">
-                                <input type="checkbox" name="chk_arah" value="CB" class="w-4 h-4 text-blue-600"> <span class="text-xs font-semibold text-slate-700">Data dikirim dari Simpul C ke Simpul B</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded transition">
-                                <input type="checkbox" name="chk_arah" value="BD" class="w-4 h-4 text-blue-600"> <span class="text-xs font-semibold text-slate-700">Data dikirim dari Simpul B menuju D (melewati C)</span>
+                                <input type="checkbox" name="chk_tak_berarah" value="AC" class="w-4 h-4 text-blue-600"> <span class="text-xs font-semibold text-slate-700">Data dikirim dari Simpul A menuju C (melewati B)</span>
                             </label>
                         </div>
-                        <div id="alert-arah" class="hidden p-2 rounded text-xs font-bold mb-3"></div>
-                        <button onclick="cekAnalisisArah()" id="btn-cek-arah" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded shadow transition active:scale-95 text-sm">Cek Jawaban</button>
+                        <div id="alert-tak-berarah" class="hidden p-3 rounded text-xs font-bold mb-3 shadow-sm"></div>
+                        <button onclick="cekAnalisisTakBerarah()" id="btn-cek-tak-berarah" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded shadow transition active:scale-95 text-sm">Cek Jawaban</button>
                     </div>
                 </div>
 
-                {{-- KESIMPULAN ARAH --}}
-                <div id="kesimpulan-arah" class="hidden mt-6 bg-white border border-green-300 p-4 rounded-lg shadow-sm">
+                {{-- KESIMPULAN: TAK BERARAH --}}
+                <div id="kesimpulan-tak-berarah" class="hidden mt-6 bg-white border border-green-300 p-4 rounded-lg shadow-sm">
                     <p class="text-sm text-green-800 leading-relaxed text-justify">
-                        <strong class="text-green-900"><i class="fa-solid fa-check-circle"></i> Kesimpulan Evaluasi:</strong> Tepat sekali! Pada <strong>Graf Tak Berarah</strong> (Simpul A dan B), data bebas bergerak bolak-balik. Namun, pada <strong>Graf Berarah</strong> (Simpul B ke C), komputer secara logis akan menolak rute yang melawan arah anak panah. Logika inilah yang dipakai sistem jalan satu arah (<em>One-Way</em>) pada aplikasi navigasi.
+                        <strong class="text-green-900"><i class="fa-solid fa-check-circle"></i> Kesimpulan Evaluasi:</strong> Tepat sekali! Pada <strong>Graf Tak Berarah</strong>, karena garisnya tidak memiliki orientasi (panah), data bebas bergerak maju maupun mundur (bolak-balik) antar simpul layaknya jalan dua arah.
                     </p>
                 </div>
             </div>
+
+            {{-- INTERAKTIF A2: GRAF BERARAH --}}
+            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 shadow-sm mb-6">
+                <h4 class="font-bold text-indigo-900 mb-3">Visualisasi Interaktif 2: Graf Berarah</h4>
+                <p class="text-sm text-indigo-800 mb-4 text-justify">
+                    <strong>Tugas Eksplorasi:</strong> Graf ini memodelkan aturan <strong>Jalan Satu Arah</strong> di jalan raya. Data ibarat kendaraan yang harus mematuhi rambu lalu lintas (panah). Uji coba pengiriman data dengan <strong>mengklik dua simpul (Asal lalu Tujuan)</strong>. Amati pergerakan mana yang akan ditolak secara logis oleh sistem!
+                </p>
+
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="flex-1">
+                        <div id="vis-berarah" class="w-full h-64 bg-white border border-slate-300 rounded-lg shadow-inner cursor-pointer"></div>
+                        <div id="route-logger-berarah" class="mt-3 p-3 bg-white border border-slate-300 rounded text-sm font-mono text-slate-600 text-center shadow-sm">
+                            Pilih Simpul Awal...
+                        </div>
+                    </div>
+
+                    {{-- TUGAS ANALISIS: BERARAH --}}
+                    <div class="flex-1 bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                        <p class="font-bold text-slate-800 text-sm mb-3">Tugas Analisis (Berarah):</p>
+                        <p class="text-xs text-slate-600 mb-4 leading-relaxed">Berdasarkan percobaan pada graf berarah di samping, manakah skenario yang <strong>VALID</strong> dan mematuhi orientasi panah? <em class="text-blue-600">(Pilih semua yang tepat)</em></p>
+                        
+                        <div class="space-y-2 mb-4">
+                            <label class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded transition">
+                                <input type="checkbox" name="chk_berarah" value="DE" class="w-4 h-4 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Data dikirim dari Simpul D ke Simpul E</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded transition">
+                                <input type="checkbox" name="chk_berarah" value="ED" class="w-4 h-4 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Data dikirim kembali dari Simpul E ke Simpul D</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded transition">
+                                <input type="checkbox" name="chk_berarah" value="EF" class="w-4 h-4 text-indigo-600"> <span class="text-xs font-semibold text-slate-700">Data dikirim dari Simpul E ke Simpul F</span>
+                            </label>
+                        </div>
+                        <div id="alert-berarah" class="hidden p-3 rounded text-xs font-bold mb-3 shadow-sm"></div>
+                        <button onclick="cekAnalisisBerarah()" id="btn-cek-berarah" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded shadow transition active:scale-95 text-sm">Cek Jawaban</button>
+                    </div>
+                </div>
+
+                {{-- KESIMPULAN: BERARAH --}}
+                <div id="kesimpulan-berarah" class="hidden mt-6 bg-white border border-green-300 p-4 rounded-lg shadow-sm">
+                    <p class="text-sm text-green-800 leading-relaxed text-justify">
+                        <strong class="text-green-900"><i class="fa-solid fa-check-circle"></i> Kesimpulan Evaluasi:</strong> Benar! Pada <strong>Graf Berarah</strong>, komputer secara logis akan menolak rute yang melawan arah anak panah (seperti E mencoba kembali ke D). Logika ketat ini sangat berguna untuk memodelkan sistem hierarki, aliran air, atau jalan satu arah (<em>One-Way</em>) pada aplikasi navigasi.
+                    </p>
+                </div>
+            </div>
+
         </div>
 
         <div class="border-t border-slate-200 my-10"></div>
@@ -123,14 +165,14 @@
                     {{-- TUGAS ANALISIS BOBOT --}}
                     <div class="flex-1 w-full bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
                         <p class="font-bold text-slate-800 text-sm mb-3">Tugas Analisis:</p>
-                        <p class="text-xs text-slate-600 mb-4 leading-relaxed text-justify">Sebagai algoritma navigasi, Anda diminta mencari rute paling efisien (waktu terkecil) dari <strong>Rumah</strong> menuju <strong>Kampus</strong>. Jika Anda memperhitungkan <strong>angka bobot</strong> pada garis tersebut, rute manakah yang secara logis harus dipilih oleh algoritma?</p>
+                        <p class="text-xs text-slate-600 mb-4 leading-relaxed text-justify">Graf ini memodelkan rute pengiriman barang dengan waktu tempuh (menit) yang bervariasi. Fokuslah pada <strong>angka bobot (waktu)</strong>, bukan pada seberapa lurus garis yang digambar di layar. Sebagai algoritma navigasi, rute manakah yang secara logis harus Anda pilih agar tiba di <strong>Kampus</strong> lebih cepat?</p>
                         
                         <div class="flex items-center gap-3 mb-2">
                             <label class="font-bold text-sm text-slate-700">Ketik (ATAS / BAWAH):</label>
                             <input type="text" id="ans-bobot" class="w-24 p-2 border border-slate-300 rounded focus:border-blue-500 outline-none font-bold text-slate-800 text-center uppercase" placeholder="...">
                         </div>
                         
-                        <div id="alert-bobot" class="hidden p-2 rounded text-xs font-bold my-3"></div>
+                        <div id="alert-bobot" class="hidden p-3 rounded text-xs font-bold my-3 shadow-sm"></div>
                         <button onclick="cekAnalisisBobot()" id="btn-cek-bobot" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 mt-2 rounded shadow transition active:scale-95 text-sm">Kirim Jawaban & Tampilkan Kesimpulan</button>
                     </div>
                 </div>
@@ -138,12 +180,11 @@
                 {{-- KESIMPULAN BOBOT --}}
                 <div id="kesimpulan-bobot" class="hidden mt-6 bg-white border border-green-300 p-4 rounded-lg shadow-sm">
                     <p class="text-sm text-green-800 leading-relaxed text-justify">
-                        <strong class="text-green-900"><i class="fa-solid fa-check-circle"></i> Kesimpulan Evaluasi:</strong> Analisis optimasi yang sangat baik! Meskipun jumlah langkahnya sama (melewati 1 simpul perantara), <strong>Rute Atas</strong> memiliki total bobot jauh lebih kecil (2 + 2 = 4 menit) dibandingkan <strong>Rute Bawah</strong> (8 + 7 = 15 menit). Pada <strong>Graf Berbobot</strong>, algoritma pencarian rute terpendek (seperti algoritma Dijkstra yang akan kita pelajari nanti) tidak lagi menghitung jumlah titik, melainkan mengalkulasi total angka bobot terkecil.
+                        <strong class="text-green-900"><i class="fa-solid fa-check-circle"></i> Kesimpulan Evaluasi:</strong> Analisis optimasi yang sangat baik! Meskipun Rute Bawah terlihat lebih "lurus" secara visual, namun <strong>Rute Atas</strong> memiliki total bobot jauh lebih kecil (2 + 2 = 4 menit) dibandingkan rute bawah (8 + 7 = 15 menit). Pada <strong>Graf Berbobot</strong>, algoritma pencarian rute terpendek tidak pernah tertipu oleh gambar visual, melainkan selalu mengalkulasi total angka bobot terkecil.
                     </p>
                 </div>
             </div>
         </div>
-
 
         <div class="border-t-[3px] border-dashed border-slate-200 my-10"></div>
 
@@ -266,76 +307,135 @@
     {{-- SCRIPT: VIS.JS & LOGIKA INTERAKTIF/PERSISTENCE           --}}
     {{-- ======================================================== --}}
     <script>
-        // Global variables untuk routing game
-        let routeNodesSelected = [];
-        let networkArah;
+        let routeNodesTakBerarah = [];
+        let networkTakBerarah;
+        
+        let routeNodesBerarah = [];
+        let networkBerarah;
 
         document.addEventListener("DOMContentLoaded", function() {
             
             const currentUserId = "{{ auth()->check() ? auth()->id() : 'guest' }}";
 
             // ==========================================
-            // 1. INIT VIS.JS GRAF ARAH (Game Routing)
+            // 1A. INIT VIS.JS GRAF TAK BERARAH
             // ==========================================
-            const nodesArah = new vis.DataSet([
-                { id: 'A', label: 'A', x: -100, y: -50, color: { background: '#3b82f6', border: '#2563eb' }, font: { color: 'white', size: 16, bold: true } },
-                { id: 'B', label: 'B', x: 100, y: -50, color: { background: '#3b82f6', border: '#2563eb' }, font: { color: 'white', size: 16, bold: true } },
-                { id: 'C', label: 'C', x: 100, y: 100, color: { background: '#8b5cf6', border: '#7c3aed' }, font: { color: 'white', size: 16, bold: true } },
-                { id: 'D', label: 'D', x: -100, y: 100, color: { background: '#f59e0b', border: '#d97706' }, font: { color: 'white', size: 16, bold: true } }
+            const nodesTakBerarah = new vis.DataSet([
+                { id: 'A', label: 'A', x: -100, y: 0, color: { background: '#3b82f6', border: '#2563eb' }, font: { color: 'white', size: 16, bold: true } },
+                { id: 'B', label: 'B', x: 0, y: 0, color: { background: '#3b82f6', border: '#2563eb' }, font: { color: 'white', size: 16, bold: true } },
+                { id: 'C', label: 'C', x: 100, y: 0, color: { background: '#8b5cf6', border: '#7c3aed' }, font: { color: 'white', size: 16, bold: true } }
             ]);
 
-            const edgesArah = new vis.DataSet([
-                { from: 'A', to: 'B', color: { color: '#94a3b8' }, width: 3 }, // Tak berarah
-                { from: 'B', to: 'C', arrows: 'to', color: { color: '#ef4444' }, width: 3 }, // Berarah
-                { from: 'C', to: 'D', arrows: 'to', color: { color: '#ef4444' }, width: 3 }  // Berarah
+            const edgesTakBerarah = new vis.DataSet([
+                { from: 'A', to: 'B', color: { color: '#94a3b8' }, width: 3 },
+                { from: 'B', to: 'C', color: { color: '#94a3b8' }, width: 3 }
             ]);
 
-            const containerArah = document.getElementById('vis-arah');
-            networkArah = new vis.Network(containerArah, { nodes: nodesArah, edges: edgesArah }, {
+            const containerTakBerarah = document.getElementById('vis-tak-berarah');
+            networkTakBerarah = new vis.Network(containerTakBerarah, { nodes: nodesTakBerarah, edges: edgesTakBerarah }, {
                 physics: false,
                 interaction: { dragNodes: false, zoomView: false, dragView: false, hover: true },
                 nodes: { shape: 'circle', margin: 15, borderWidth: 2 }
             });
 
-            // Logika Klik Simulasi Routing
-            networkArah.on("click", function (params) {
+            // Logika Klik Simulasi Tak Berarah
+            networkTakBerarah.on("click", function (params) {
                 if (params.nodes.length > 0) {
                     const clickedNode = params.nodes[0];
-                    const logger = document.getElementById('route-logger');
+                    const logger = document.getElementById('route-logger-tak-berarah');
                     
-                    if (routeNodesSelected.length === 0) {
-                        routeNodesSelected.push(clickedNode);
+                    if (routeNodesTakBerarah.length === 0) {
+                        routeNodesTakBerarah.push(clickedNode);
                         logger.innerHTML = `Mulai dari <strong>Simpul ${clickedNode}</strong>... (Pilih tujuan)`;
                         logger.className = "mt-3 p-3 bg-blue-50 border border-blue-200 rounded text-sm font-mono text-blue-800 text-center";
-                    } else if (routeNodesSelected.length === 1) {
-                        const start = routeNodesSelected[0];
+                    } else if (routeNodesTakBerarah.length === 1) {
+                        const start = routeNodesTakBerarah[0];
                         const end = clickedNode;
                         
                         if (start === end) {
-                            routeNodesSelected = [];
+                            routeNodesTakBerarah = [];
                             logger.innerHTML = "Pilih Simpul Awal...";
                             logger.className = "mt-3 p-3 bg-white border border-slate-300 rounded text-sm font-mono text-slate-600 text-center";
                             return;
                         }
 
-                        // Cek validasi rute secara hardcode untuk graf A-B-C-D ini
                         let isValid = false;
                         let msg = "";
                         
-                        // A-B tak berarah (bisa A->B, B->A)
-                        if ((start==='A' && end==='B') || (start==='B' && end==='A')) { isValid = true; msg = `Paket berhasil dikirim dari ${start} ke ${end}. (Garis dua arah)`; }
-                        // B->C berarah (hanya B->C)
-                        else if (start==='B' && end==='C') { isValid = true; msg = `Paket berhasil dikirim dari ${start} ke ${end}. (Sesuai arah panah)`; }
-                        else if (start==='C' && end==='B') { isValid = false; msg = `ERROR: Gagal dari C ke B. Melawan arah panah!`; }
-                        // C->D berarah (hanya C->D)
-                        else if (start==='C' && end==='D') { isValid = true; msg = `Paket berhasil dikirim dari ${start} ke ${end}. (Sesuai arah panah)`; }
-                        else if (start==='D' && end==='C') { isValid = false; msg = `ERROR: Gagal dari D ke C. Melawan arah panah!`; }
-                        // Multi-hop valid: A->C, A->D, B->D
-                        else if (start==='A' && end==='C') { isValid = true; msg = `Routing sukses: A -> B -> C.`; }
-                        else if (start==='A' && end==='D') { isValid = true; msg = `Routing sukses: A -> B -> C -> D.`; }
-                        else if (start==='B' && end==='D') { isValid = true; msg = `Routing sukses: B -> C -> D.`; }
-                        // Multi-hop invalid (karena macet di C->B atau D->C)
-                        else { isValid = false; msg = `ERROR: Rute dari ${start} ke ${end} tidak tersedia atau terblokir arah panah.`; }
+                        if ((start==='A' && end==='B') || (start==='B' && end==='A')) { isValid = true; msg = `Paket dikirim dari ${start} ke ${end}. (Garis dua arah)`; }
+                        else if ((start==='B' && end==='C') || (start==='C' && end==='B')) { isValid = true; msg = `Paket dikirim dari ${start} ke ${end}. (Garis dua arah)`; }
+                        else if ((start==='A' && end==='C') || (start==='C' && end==='A')) { isValid = true; msg = `Routing sukses: ${start} -> B -> ${end}. (Multi-hop 2 arah)`; }
+
+                        if (isValid) {
+                            logger.innerHTML = `✅ ${msg}`;
+                            logger.className = "mt-3 p-3 bg-green-50 border border-green-300 rounded text-sm font-mono text-green-800 text-center";
+                        } else {
+                            logger.innerHTML = `❌ Rute tidak tersedia.`;
+                            logger.className = "mt-3 p-3 bg-red-50 border border-red-300 rounded text-sm font-mono text-red-800 text-center animate-pulse";
+                        }
+                        
+                        routeNodesTakBerarah = [];
+                        setTimeout(() => {
+                            if(routeNodesTakBerarah.length === 0) {
+                                logger.innerHTML = "Klik simpul untuk mencoba lagi...";
+                                logger.className = "mt-3 p-3 bg-white border border-slate-300 rounded text-sm font-mono text-slate-600 text-center transition-all duration-500";
+                            }
+                        }, 5000); // DIPERLAMBAT KE 5 DETIK
+                    }
+                }
+            });
+
+            // ==========================================
+            // 1B. INIT VIS.JS GRAF BERARAH
+            // ==========================================
+            const nodesBerarah = new vis.DataSet([
+                { id: 'D', label: 'D', x: -100, y: 0, color: { background: '#f59e0b', border: '#d97706' }, font: { color: 'white', size: 16, bold: true } },
+                { id: 'E', label: 'E', x: 0, y: 0, color: { background: '#3b82f6', border: '#2563eb' }, font: { color: 'white', size: 16, bold: true } },
+                { id: 'F', label: 'F', x: 100, y: 0, color: { background: '#10b981', border: '#059669' }, font: { color: 'white', size: 16, bold: true } }
+            ]);
+
+            const edgesBerarah = new vis.DataSet([
+                { from: 'D', to: 'E', arrows: 'to', color: { color: '#ef4444' }, width: 3 },
+                { from: 'E', to: 'F', arrows: 'to', color: { color: '#ef4444' }, width: 3 }
+            ]);
+
+            const containerBerarah = document.getElementById('vis-berarah');
+            networkBerarah = new vis.Network(containerBerarah, { nodes: nodesBerarah, edges: edgesBerarah }, {
+                physics: false,
+                interaction: { dragNodes: false, zoomView: false, dragView: false, hover: true },
+                nodes: { shape: 'circle', margin: 15, borderWidth: 2 }
+            });
+
+            // Logika Klik Simulasi Berarah
+            networkBerarah.on("click", function (params) {
+                if (params.nodes.length > 0) {
+                    const clickedNode = params.nodes[0];
+                    const logger = document.getElementById('route-logger-berarah');
+                    
+                    if (routeNodesBerarah.length === 0) {
+                        routeNodesBerarah.push(clickedNode);
+                        logger.innerHTML = `Mulai dari <strong>Simpul ${clickedNode}</strong>... (Pilih tujuan)`;
+                        logger.className = "mt-3 p-3 bg-indigo-50 border border-indigo-200 rounded text-sm font-mono text-indigo-800 text-center";
+                    } else if (routeNodesBerarah.length === 1) {
+                        const start = routeNodesBerarah[0];
+                        const end = clickedNode;
+                        
+                        if (start === end) {
+                            routeNodesBerarah = [];
+                            logger.innerHTML = "Pilih Simpul Awal...";
+                            logger.className = "mt-3 p-3 bg-white border border-slate-300 rounded text-sm font-mono text-slate-600 text-center";
+                            return;
+                        }
+
+                        let isValid = false;
+                        let msg = "";
+                        
+                        if (start==='D' && end==='E') { isValid = true; msg = `Paket dikirim dari ${start} ke ${end}. (Sesuai arah panah)`; }
+                        else if (start==='E' && end==='D') { isValid = false; msg = `ERROR: Gagal dari ${start} ke ${end}. Melawan arah panah!`; }
+                        else if (start==='E' && end==='F') { isValid = true; msg = `Paket dikirim dari ${start} ke ${end}. (Sesuai arah panah)`; }
+                        else if (start==='F' && end==='E') { isValid = false; msg = `ERROR: Gagal dari ${start} ke ${end}. Melawan arah panah!`; }
+                        else if (start==='D' && end==='F') { isValid = true; msg = `Routing sukses: D -> E -> F.`; }
+                        else if (start==='F' && end==='D') { isValid = false; msg = `ERROR: Melawan arah panah!`; }
 
                         if (isValid) {
                             logger.innerHTML = `✅ ${msg}`;
@@ -345,17 +445,17 @@
                             logger.className = "mt-3 p-3 bg-red-50 border border-red-300 rounded text-sm font-mono text-red-800 text-center animate-pulse";
                         }
                         
-                        // Reset selection untuk coba lagi
-                        routeNodesSelected = [];
+                        routeNodesBerarah = [];
                         setTimeout(() => {
-                            if(routeNodesSelected.length === 0) {
+                            if(routeNodesBerarah.length === 0) {
                                 logger.innerHTML = "Klik simpul untuk mencoba lagi...";
                                 logger.className = "mt-3 p-3 bg-white border border-slate-300 rounded text-sm font-mono text-slate-600 text-center transition-all duration-500";
                             }
-                        }, 3000);
+                        }, 5000); // DIPERLAMBAT KE 5 DETIK
                     }
                 }
             });
+
 
             // ==========================================
             // 2. INIT VIS.JS GRAF BOBOT
@@ -383,20 +483,13 @@
 
             // Handle Resize
             const resizeObserver = new ResizeObserver(() => {
-                if(containerArah.offsetWidth > 0) { networkArah.redraw(); networkArah.fit({ animation: false }); }
+                if(containerTakBerarah.offsetWidth > 0) { networkTakBerarah.redraw(); networkTakBerarah.fit({ animation: false }); }
+                if(containerBerarah.offsetWidth > 0) { networkBerarah.redraw(); networkBerarah.fit({ animation: false }); }
                 if(containerBobot.offsetWidth > 0) { networkBobot.redraw(); networkBobot.fit({ animation: false }); }
             });
-            resizeObserver.observe(containerArah);
+            resizeObserver.observe(containerTakBerarah);
+            resizeObserver.observe(containerBerarah);
             resizeObserver.observe(containerBobot);
-
-            const slide4 = document.getElementById('step-4');
-            if (slide4) {
-                new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
-                    });
-                }).observe(slide4);
-            }
 
             // ========================================================
             // 3. LOGIKA PEMBERSIHAN MEMORI UNTUK AKUN BARU
@@ -404,8 +497,10 @@
             const savedUserId13 = localStorage.getItem('graf_active_user_13');
             if (savedUserId13 !== currentUserId) {
                 // Reset Kuis Mini Arah
-                localStorage.removeItem('analisis_arah_done_user_' + savedUserId13);
-                localStorage.removeItem('ans_arah_cb_user_' + savedUserId13);
+                localStorage.removeItem('analisis_tak_berarah_done_user_' + savedUserId13);
+                localStorage.removeItem('ans_tak_berarah_cb_user_' + savedUserId13);
+                localStorage.removeItem('analisis_berarah_done_user_' + savedUserId13);
+                localStorage.removeItem('ans_berarah_cb_user_' + savedUserId13);
                 // Reset Kuis Mini Bobot
                 localStorage.removeItem('analisis_bobot_done_user_' + savedUserId13);
                 localStorage.removeItem('ans_bobot_txt_user_' + savedUserId13);
@@ -421,20 +516,28 @@
             // ========================================================
             // 4. RESTORE STATE KUIS MINI (Arah & Bobot)
             // ========================================================
-            if(localStorage.getItem('analisis_arah_done_user_' + currentUserId) === 'true') {
-                let savedCbArah = JSON.parse(localStorage.getItem('ans_arah_cb_user_' + currentUserId)) || ['AB', 'BA', 'BD'];
-                savedCbArah.forEach(val => {
-                    let cb = document.querySelector(`input[name="chk_arah"][value="${val}"]`);
+            if(localStorage.getItem('analisis_tak_berarah_done_user_' + currentUserId) === 'true') {
+                let savedCb = JSON.parse(localStorage.getItem('ans_tak_berarah_cb_user_' + currentUserId)) || ['AB', 'BA', 'AC'];
+                savedCb.forEach(val => {
+                    let cb = document.querySelector(`input[name="chk_tak_berarah"][value="${val}"]`);
                     if(cb) cb.checked = true;
                 });
-                document.querySelectorAll('input[name="chk_arah"]').forEach(el => el.disabled = true);
-                const btnArah = document.getElementById('btn-cek-arah');
-                if(btnArah) {
-                    btnArah.disabled = true;
-                    btnArah.className = "w-full bg-green-600 text-white font-bold py-2 rounded text-sm cursor-not-allowed";
-                    btnArah.innerHTML = "✔ Dianalisis";
-                }
-                document.getElementById('kesimpulan-arah').classList.remove('hidden');
+                document.querySelectorAll('input[name="chk_tak_berarah"]').forEach(el => el.disabled = true);
+                const btn = document.getElementById('btn-cek-tak-berarah');
+                if(btn) { btn.disabled = true; btn.className = "w-full bg-green-600 text-white font-bold py-2 rounded text-sm cursor-not-allowed"; btn.innerHTML = "✔ Dianalisis"; }
+                document.getElementById('kesimpulan-tak-berarah').classList.remove('hidden');
+            }
+
+            if(localStorage.getItem('analisis_berarah_done_user_' + currentUserId) === 'true') {
+                let savedCb = JSON.parse(localStorage.getItem('ans_berarah_cb_user_' + currentUserId)) || ['DE', 'EF'];
+                savedCb.forEach(val => {
+                    let cb = document.querySelector(`input[name="chk_berarah"][value="${val}"]`);
+                    if(cb) cb.checked = true;
+                });
+                document.querySelectorAll('input[name="chk_berarah"]').forEach(el => el.disabled = true);
+                const btn = document.getElementById('btn-cek-berarah');
+                if(btn) { btn.disabled = true; btn.className = "w-full bg-green-600 text-white font-bold py-2 rounded text-sm cursor-not-allowed"; btn.innerHTML = "✔ Dianalisis"; }
+                document.getElementById('kesimpulan-berarah').classList.remove('hidden');
             }
 
             if(localStorage.getItem('analisis_bobot_done_user_' + currentUserId) === 'true') {
@@ -457,12 +560,12 @@
             // 5. LOGIKA PERSISTENCE AKTIVITAS 1.3 UTAMA (DATABASE)
             // ========================================================
             @if($isDone13)
-                // Restore Q1 (Input Text)
+                // Restore Q1
                 document.getElementById('q1_3_1').value = localStorage.getItem('user_ans_1_3_1_user_' + currentUserId) || "Graf Berarah";
-                // Restore Q2 (Input Text)
+                // Restore Q2
                 document.getElementById('q1_3_2').value = localStorage.getItem('user_ans_1_3_2_user_' + currentUserId) || "Graf Berbobot";
 
-                // Restore Q3 (Checkbox)
+                // Restore Q3
                 let savedCb13 = JSON.parse(localStorage.getItem('user_ans_1_3_3_user_' + currentUserId)) || ['berarah', 'berbobot'];
                 savedCb13.forEach(val => {
                     let cb = document.querySelector(`input[name="q1_3_3"][value="${val}"]`);
@@ -485,57 +588,89 @@
                 }
 
                 document.getElementById('feedback13').classList.remove('hidden');
-                
                 const btnP = document.getElementById('btnPeriksa13');
                 if(btnP) btnP.classList.add('hidden');
 
                 const btnN = document.getElementById('btnNext13');
-                if(btnN) {
-                    btnN.disabled = false;
-                    btnN.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
+                if(btnN) { btnN.disabled = false; btnN.classList.remove('opacity-50', 'cursor-not-allowed'); }
             @endif
         });
 
         // ---------------------------------------------
-        // FUNGSI CEK MINI: ARAH
+        // FUNGSI CEK MINI: TAK BERARAH
         // ---------------------------------------------
-        function cekAnalisisArah() {
-            const cbAB = document.querySelector('input[name="chk_arah"][value="AB"]').checked;
-            const cbBA = document.querySelector('input[name="chk_arah"][value="BA"]').checked;
-            const cbCB = document.querySelector('input[name="chk_arah"][value="CB"]').checked;
-            const cbBD = document.querySelector('input[name="chk_arah"][value="BD"]').checked;
-            
-            const alertBox = document.getElementById('alert-arah');
+        function cekAnalisisTakBerarah() {
+            const cbAB = document.querySelector('input[name="chk_tak_berarah"][value="AB"]').checked;
+            const cbBA = document.querySelector('input[name="chk_tak_berarah"][value="BA"]').checked;
+            const cbAC = document.querySelector('input[name="chk_tak_berarah"][value="AC"]').checked;
+            const alertBox = document.getElementById('alert-tak-berarah');
 
-            if (!(cbAB || cbBA || cbCB || cbBD)) {
-                alertBox.className = "p-2 rounded text-xs font-bold bg-yellow-50 text-yellow-800 border border-yellow-200 mt-2 block";
-                alertBox.innerText = "⚠️ Pilih minimal satu rute.";
+            if (!(cbAB || cbBA || cbAC)) {
+                alertBox.className = "p-3 rounded text-xs font-bold bg-yellow-50 text-yellow-800 border border-yellow-200 mt-2 block shadow-sm";
+                alertBox.innerText = "⚠️ Pilih minimal satu skenario yang menurut Anda benar.";
                 return;
             }
 
-            // Kunci Jawaban: AB, BA, BD benar. CB salah.
-            if (cbAB && cbBA && cbBD && !cbCB) {
+            // Semua benar karena graf tak berarah bisa bolak-balik
+            if (cbAB && cbBA && cbAC) {
                 alertBox.classList.add('hidden');
-                
                 const currentUserId = "{{ auth()->check() ? auth()->id() : 'guest' }}";
-                localStorage.setItem('analisis_arah_done_user_' + currentUserId, 'true');
+                localStorage.setItem('analisis_tak_berarah_done_user_' + currentUserId, 'true');
                 
                 let checkedCb = [];
-                document.querySelectorAll('input[name="chk_arah"]:checked').forEach(cb => checkedCb.push(cb.value));
-                localStorage.setItem('ans_arah_cb_user_' + currentUserId, JSON.stringify(checkedCb));
+                document.querySelectorAll('input[name="chk_tak_berarah"]:checked').forEach(cb => checkedCb.push(cb.value));
+                localStorage.setItem('ans_tak_berarah_cb_user_' + currentUserId, JSON.stringify(checkedCb));
 
-                document.querySelectorAll('input[name="chk_arah"]').forEach(el => el.disabled = true);
+                document.querySelectorAll('input[name="chk_tak_berarah"]').forEach(el => el.disabled = true);
                 
-                const btnCek = document.getElementById('btn-cek-arah');
+                const btnCek = document.getElementById('btn-cek-tak-berarah');
                 btnCek.disabled = true;
                 btnCek.className = "w-full bg-green-600 text-white font-bold py-2 rounded shadow text-sm cursor-not-allowed transition-all";
                 btnCek.innerHTML = "✔ Dianalisis";
 
-                document.getElementById('kesimpulan-arah').classList.remove('hidden');
+                document.getElementById('kesimpulan-tak-berarah').classList.remove('hidden');
             } else {
-                alertBox.className = "p-2 rounded text-xs font-bold bg-red-50 text-red-800 border border-red-200 mt-2 block animate-pulse";
-                alertBox.innerHTML = "❌ Kurang tepat. <br><span class='font-normal'>Ingat: C ke B dilarang karena melawan arah panah. Sisanya diperbolehkan!</span>";
+                alertBox.className = "p-3 rounded text-xs font-bold bg-red-50 text-red-800 border border-red-200 mt-2 block animate-pulse shadow-sm";
+                alertBox.innerHTML = "❌ Analisis Anda belum sempurna. <br><span class='font-normal mt-1 block text-slate-700'>Hint: Coba kembali uji di kanvas. Apakah ada rute bolak-balik yang ditolak oleh sistem? Pikirkan ulang!</span>";
+            }
+        }
+
+        // ---------------------------------------------
+        // FUNGSI CEK MINI: BERARAH
+        // ---------------------------------------------
+        function cekAnalisisBerarah() {
+            const cbDE = document.querySelector('input[name="chk_berarah"][value="DE"]').checked;
+            const cbED = document.querySelector('input[name="chk_berarah"][value="ED"]').checked;
+            const cbEF = document.querySelector('input[name="chk_berarah"][value="EF"]').checked;
+            const alertBox = document.getElementById('alert-berarah');
+
+            if (!(cbDE || cbED || cbEF)) {
+                alertBox.className = "p-3 rounded text-xs font-bold bg-yellow-50 text-yellow-800 border border-yellow-200 mt-2 block shadow-sm";
+                alertBox.innerText = "⚠️ Pilih minimal satu skenario yang menurut Anda benar.";
+                return;
+            }
+
+            // Hanya DE dan EF yang benar, ED salah
+            if (cbDE && cbEF && !cbED) {
+                alertBox.classList.add('hidden');
+                const currentUserId = "{{ auth()->check() ? auth()->id() : 'guest' }}";
+                localStorage.setItem('analisis_berarah_done_user_' + currentUserId, 'true');
+                
+                let checkedCb = [];
+                document.querySelectorAll('input[name="chk_berarah"]:checked').forEach(cb => checkedCb.push(cb.value));
+                localStorage.setItem('ans_berarah_cb_user_' + currentUserId, JSON.stringify(checkedCb));
+
+                document.querySelectorAll('input[name="chk_berarah"]').forEach(el => el.disabled = true);
+                
+                const btnCek = document.getElementById('btn-cek-berarah');
+                btnCek.disabled = true;
+                btnCek.className = "w-full bg-green-600 text-white font-bold py-2 rounded shadow text-sm cursor-not-allowed transition-all";
+                btnCek.innerHTML = "✔ Dianalisis";
+
+                document.getElementById('kesimpulan-berarah').classList.remove('hidden');
+            } else {
+                alertBox.className = "p-3 rounded text-xs font-bold bg-red-50 text-red-800 border border-red-200 mt-2 block animate-pulse shadow-sm";
+                alertBox.innerHTML = "❌ Analisis Anda belum tepat. <br><span class='font-normal mt-1 block text-slate-700'>Hint: Ingat prinsip 'Jalan Satu Arah' di dunia nyata. Coba uji di kanvas: apa yang terjadi jika Anda memaksakan rute dari E kembali ke D?</span>";
             }
         }
 
@@ -548,14 +683,13 @@
             const alertBox = document.getElementById('alert-bobot');
 
             if (val === '') {
-                alertBox.className = "p-2 rounded text-xs font-bold bg-yellow-50 text-yellow-800 border border-yellow-200 mt-2 block";
+                alertBox.className = "p-3 rounded text-xs font-bold bg-yellow-50 text-yellow-800 border border-yellow-200 mt-2 block shadow-sm";
                 alertBox.innerText = "⚠️ Silakan ketik ATAS atau BAWAH.";
                 return;
             }
 
             if (val === 'ATAS') {
                 alertBox.classList.add('hidden');
-                
                 const currentUserId = "{{ auth()->check() ? auth()->id() : 'guest' }}";
                 localStorage.setItem('analisis_bobot_done_user_' + currentUserId, 'true');
                 localStorage.setItem('ans_bobot_txt_user_' + currentUserId, inputAns.value);
@@ -570,8 +704,8 @@
 
                 document.getElementById('kesimpulan-bobot').classList.remove('hidden');
             } else {
-                alertBox.className = "p-2 rounded text-xs font-bold bg-red-50 text-red-800 border border-red-200 mt-2 block animate-pulse";
-                alertBox.innerHTML = "❌ Logika kurang tepat. <br><span class='font-normal'>Coba jumlahkan angka pada Rute Atas (2+2) dan Rute Bawah (8+7). Pilih hasil terkecil!</span>";
+                alertBox.className = "p-3 rounded text-xs font-bold bg-red-50 text-red-800 border border-red-200 mt-2 block animate-pulse shadow-sm";
+                alertBox.innerHTML = "❌ Pilihan rute Anda masih memakan waktu lebih lama. <br><span class='font-normal mt-1 block text-slate-700'>Hint: Komputer tidak menilai jarak dari visual lurus atau berliku, tapi murni dari perhitungan angkanya. Coba hitung ulang total menit yang dibutuhkan untuk Rute Atas dan Rute Bawah!</span>";
             }
         }
 
@@ -605,13 +739,11 @@
 
             let benar = 0;
             
-            // Cek No 1: Graf Berarah (Toleransi kata)
+            // Cek No 1
             if (['graf berarah', 'berarah', 'directed graph', 'directed'].includes(ans1)) benar++;
-            
-            // Cek No 2: Graf Berbobot (Toleransi kata)
+            // Cek No 2
             if (['graf berbobot', 'berbobot', 'weighted graph', 'weighted'].includes(ans2)) benar++;
-
-            // Cek No 3: Graf Berarah & Graf Berbobot
+            // Cek No 3
             if (cbArah && cbBobot && !cbTakArah && !cbTakBobot) benar++;
 
             if (benar === 3) {
@@ -649,7 +781,7 @@
                 }
             } else {
                 alertBox.className = "p-4 rounded-lg mb-5 text-sm font-bold border bg-red-50 border-red-300 text-red-700 animate-pulse shadow-sm";
-                alertBox.innerHTML = `❌ Pemodelan Anda belum tepat. <br><span class="font-normal text-xs mt-1 block">Silakan baca ulang definisi masing-masing graf dan perbaiki analisis Anda!</span>`;
+                alertBox.innerHTML = `❌ Pemodelan Anda belum tepat. <br><span class="font-normal text-xs mt-1 block text-slate-700">Hint: Silakan baca ulang definisi masing-masing graf pada materi di atas dan perbaiki analisis Anda!</span>`;
             }
             alertBox.classList.remove('hidden');
         }

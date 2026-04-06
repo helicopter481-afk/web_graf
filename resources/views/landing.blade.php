@@ -103,7 +103,7 @@
             </div>
         </section>
 
-        {{-- SECTION FITUR --}}
+        {{-- SECTION FITUR (DIREVISI MENJADI 3 KOTAK UTAMA) --}}
         <section id="fitur" class="py-20 md:py-28 bg-surface dark:bg-dark border-b border-borderline dark:border-slate-800 transition-colors duration-300">
             <div class="max-w-7xl mx-auto px-6 lg:px-8">
                 <div class="text-center max-w-2xl mx-auto mb-16">
@@ -113,46 +113,42 @@
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-white dark:bg-slate-800/50 p-6 rounded-2xl border border-borderline dark:border-slate-700 shadow-float hover:border-primary/30 dark:hover:border-primary/50 transition-colors">
-                        <div class="w-12 h-12 rounded-lg bg-blue-50 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center mb-5">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
+                {{-- Ubah menjadi 3 Kolom agar lebih lega dan proporsional --}}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    {{-- Kotak 1: Visualisasi --}}
+                    <div class="bg-white dark:bg-slate-800/50 p-8 rounded-3xl border border-borderline dark:border-slate-700 shadow-float hover:border-primary/30 dark:hover:border-primary/50 transition-colors">
+                        <div class="w-14 h-14 rounded-xl bg-blue-50 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Visualisasi Interaktif</h3>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Visualisasi Interaktif</h3>
                         <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                            Pahami hubungan antar simpul dan sisi melalui representasi visual yang merespons setiap interaksi.
+                            Pahami konsep abstrak struktur data graf melalui representasi visual dinamis yang secara langsung merespons setiap interaksi dan klik Anda.
                         </p>
                     </div>
 
-                    <div class="bg-white dark:bg-slate-800/50 p-6 rounded-2xl border border-borderline dark:border-slate-700 shadow-float hover:border-primary/30 dark:hover:border-primary/50 transition-colors">
-                        <div class="w-12 h-12 rounded-lg bg-blue-50 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center mb-5">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    {{-- Kotak 2: Live Coding --}}
+                    <div class="bg-white dark:bg-slate-800/50 p-8 rounded-3xl border border-borderline dark:border-slate-700 shadow-float hover:border-primary/30 dark:hover:border-primary/50 transition-colors">
+                        <div class="w-14 h-14 rounded-xl bg-blue-50 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Live Coding Python</h3>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Live Coding Python</h3>
                         <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                            Tulis dan uji coba algoritma Python langsung di dalam modul. Kompilasi terjadi secara *real-time* di peramban.
+                            Praktikkan langsung algoritma yang dipelajari. Tulis, modifikasi, dan jalankan kode Python secara <em>real-time</em> tepat di dalam peramban Anda.
                         </p>
                     </div>
 
-                    <div class="bg-white dark:bg-slate-800/50 p-6 rounded-2xl border border-borderline dark:border-slate-700 shadow-float hover:border-primary/30 dark:hover:border-primary/50 transition-colors">
-                        <div class="w-12 h-12 rounded-lg bg-blue-50 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center mb-5">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    {{-- Kotak 3: Pembelajaran Terstruktur (Evaluasi Otomatis + Scaffolding) --}}
+                    <div class="bg-white dark:bg-slate-800/50 p-8 rounded-3xl border border-borderline dark:border-slate-700 shadow-float hover:border-primary/30 dark:hover:border-primary/50 transition-colors">
+                        <div class="w-14 h-14 rounded-xl bg-blue-50 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center mb-6">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Evaluasi Otomatis</h3>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Pembelajaran Terstruktur</h3>
                         <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                            Dapatkan umpan balik seketika. Sistem akan memvalidasi sintaks dan logika kode yang Anda tulis.
+                            Kuasai BFS, DFS, hingga Dijkstra tahap demi tahap. Sistem akan mengevaluasi otomatis kode Anda dan membuka materi lanjutan (<em>scaffolding</em>).
                         </p>
                     </div>
 
-                    <div class="bg-white dark:bg-slate-800/50 p-6 rounded-2xl border border-borderline dark:border-slate-700 shadow-float hover:border-primary/30 dark:hover:border-primary/50 transition-colors">
-                        <div class="w-12 h-12 rounded-lg bg-blue-50 dark:bg-primary/20 text-primary dark:text-blue-400 flex items-center justify-center mb-5">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Rekam Jejak Studi</h3>
-                        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                            Seluruh progres materi, nilai evaluasi, dan jurnal refleksi dicatat rapi pada panel metrik pengguna.
-                        </p>
-                    </div>
                 </div>
             </div>
         </section>
@@ -267,7 +263,7 @@
         <div class="max-w-7xl mx-auto px-6 py-10">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo_aplikasi.png') }}" alt="Logo GrafLearn" class="w-8 h-8 rounded object-cover border border-slate-200 dark:border-slate-700" />
+                    <img src="{{ asset('images/logo_aplikasi.png') }}" alt="Logo GrafLearn" class="w-8 h-8 rounded object-cover border border-slate-200 dark:border-slate-700 bg-white" />
                     <span class="font-bold text-slate-800 dark:text-white text-lg tracking-tight">GrafLearn</span>
                 </div>
                 

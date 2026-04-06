@@ -134,7 +134,7 @@
                 {{-- 2. MODULES GRID --}}
                 <div>
                     <div class="flex items-center justify-between mb-6 pb-2 border-b border-slate-200 dark:border-slate-800">
-                        <h2 class="text-lg font-bold text-slate-800 tracking-tight">Materi Kurikulum</h2>
+                        <h2 class="text-lg font-bold text-slate-800 tracking-tight">Daftar Materi</h2>
                         <span class="text-xs px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-md font-mono border border-slate-200 dark:border-slate-700 shadow-sm">Semester Genap</span>
                     </div>
 
